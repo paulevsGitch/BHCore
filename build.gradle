@@ -156,6 +156,7 @@ task javadocJar(type: Jar) {
 
 tasks.publishToMavenLocal.dependsOn(tasks.remapJar)
 
+// Solution from here: https://stackoverflow.com/questions/68511986/how-to-solve-jitpack-error-no-build-artifacts-found
 publishing {
 	repositories {
 		mavenLocal()
@@ -163,16 +164,21 @@ publishing {
 
 	publications {
 		mavenJava(MavenPublication) {
-			artifactId project.archives_base_name
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
-				classifier null
-				builtBy remapJar
-			}
-
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") {
-				classifier 'dev'
-				builtBy remapJar
-			}
+			// artifactId project.archives_base_name
+			// artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
+			// 	classifier null
+			// 	builtBy remapJar
+			// }
+			// 
+			// artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") {
+			// 	classifier 'dev'
+			// 	builtBy remapJar
+			// }
+			
+			groupId = project.maven_group
+			artifactId = 'library'
+			version = project.mod_version
+			from components.java
 		}
 	}
 }
