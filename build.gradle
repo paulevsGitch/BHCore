@@ -164,21 +164,21 @@ publishing {
 
 	publications {
 		mavenJava(MavenPublication) {
-			// artifactId project.archives_base_name
-			// artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
-			// 	classifier null
-			// 	builtBy remapJar
-			// }
-			// 
-			// artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") {
-			// 	classifier 'dev'
-			// 	builtBy remapJar
-			// }
+			artifactId project.archives_base_name
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
+				classifier null
+				builtBy remapJar
+			}
 			
-			groupId = project.maven_group
-			artifactId = 'library'
-			version = project.mod_version
-			from components.java
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") {
+				classifier 'dev'
+				builtBy remapJar
+			}
+			
+			// groupId = project.maven_group
+			// artifactId = 'library'
+			// version = project.mod_version
+			// from components.java
 		}
 	}
 }
