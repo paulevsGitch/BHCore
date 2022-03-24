@@ -3,9 +3,5 @@ jdk:
 before_install:
   - echo "Before Install"
   - ./ensure-java-17 install
-install:
-  - echo "Install"
-  - if ! ./ensure-java-17 use; then source ~/.sdkman/bin/sdkman-init.sh; fi
-  - java -version
 
 # Thanks to https://github.com/jitpack/jitpack.io/issues/4355#issuecomment-744678253
