@@ -20,7 +20,6 @@ buildscript {
 
 plugins {
 	id 'java'
-	id 'maven-publish'
 }
 
 compileJava {
@@ -152,15 +151,4 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar) {
 	from javadoc
 	classifier = 'javadoc'
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = group
-            artifactId = archivesBaseName
-            version = version
-            from components.java
-        }
-    }
 }
