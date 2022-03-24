@@ -20,6 +20,7 @@ buildscript {
 
 plugins {
 	id 'java'
+	id 'maven-publish'
 }
 
 compileJava {
@@ -28,15 +29,13 @@ compileJava {
     options.compilerArgs << "-XDignore.symbol.file" << "-Xlint:unchecked"
 }
 
-sourceCompatibility = 1.8
-
 apply plugin: "fabric-loom"
 
 import net.fabricmc.loom.task.RunClientTask
 import net.fabricmc.loom.task.RunServerTask
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -151,4 +150,27 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar) {
 	from javadoc
 	classifier = 'javadoc'
+}
+
+tasks.publishToMavenLocal.dependsOn(tasks.remapJar)
+
+publishing {
+	repositories {
+		mavenLocal()
+	}
+
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId project.archives_base_name
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
+				classifier null
+				builtBy remapJar
+			}
+
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") {
+				classifier 'dev'
+				builtBy remapJar
+			}
+		}
+	}
 }
