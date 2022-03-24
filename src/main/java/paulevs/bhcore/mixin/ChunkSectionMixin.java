@@ -39,7 +39,7 @@ public class ChunkSectionMixin implements CoreChunkSection {
 	public void onTagLoad(CompoundTag chunkTag, CompoundTag sectionTag, CallbackInfo info) {
 		for (int index = 0; index < data.length; index++) {
 			String key = SectionDataHandler.getKey(index);
-			data[index].saveToBNT(key, sectionTag);
+			data[index].loadFromBNT(key, sectionTag);
 		}
 	}
 	
