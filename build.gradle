@@ -154,17 +154,13 @@ task javadocJar(type: Jar) {
 	classifier = 'javadoc'
 }
 
-tasks.publishToMavenLocal.dependsOn(tasks.remapJar)
-
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = archivesBaseName
+            version = version
+            from components.java
+        }
+    }
 }
