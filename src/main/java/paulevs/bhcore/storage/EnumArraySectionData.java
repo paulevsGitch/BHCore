@@ -12,7 +12,7 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 	
 	public EnumArraySectionData(int capacity, Class<E> enumClass) {
 		constants = enumClass.getEnumConstants();
-		type = constants.length < ArrayType.NIBBLE.maxValue ? ArrayType.NIBBLE : constants.length < ArrayType.BYTE.maxValue ? ArrayType.BYTE : ArrayType.INT;
+		type = getType(capacity);
 		array = type.constructor.apply(capacity);
 		
 		if (type == ArrayType.NIBBLE) {
@@ -25,6 +25,12 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 			ByteArraySectionData data = ByteArraySectionData.class.cast(array);
 			for (int i = 0; i < capacity; i++) {
 				data.setData(i, (byte) type.maxValue);
+			}
+		}
+		else if (type == ArrayType.SHORT) {
+			ShortArraySectionData data = ShortArraySectionData.class.cast(array);
+			for (int i = 0; i < capacity; i++) {
+				data.setData(i, (short) type.maxValue);
 			}
 		}
 		else {
@@ -50,6 +56,7 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 		switch (type) {
 			case NIBBLE -> value = NibbleArraySectionData.class.cast(array).getData(index) & type.maxValue;
 			case BYTE -> value = ByteArraySectionData.class.cast(array).getData(index) & type.maxValue;
+			case SHORT -> value = ShortArraySectionData.class.cast(array).getData(index) & type.maxValue;
 			case INT -> value = IntArraySectionData.class.cast(array).getData(index) & type.maxValue;
 		}
 		if (value == type.maxValue) return null;
@@ -62,15 +69,27 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 		switch (type) {
 			case NIBBLE -> NibbleArraySectionData.class.cast(array).setData(index, (byte) value);
 			case BYTE -> ByteArraySectionData.class.cast(array).setData(index, (byte) value);
+			case SHORT -> ShortArraySectionData.class.cast(array).setData(index, (byte) value);
 			case INT -> IntArraySectionData.class.cast(array).setData(index, value);
 		}
+	}
+	
+	private static ArrayType getType(int capacity) {
+		for (ArrayType type: ArrayType.VALUES) {
+			if (capacity < type.maxValue) {
+				return type;
+			}
+		}
+		return ArrayType.INT;
 	}
 	
 	private enum ArrayType {
 		NIBBLE(0, NibbleArraySectionData::new, 15),
 		BYTE(1, ByteArraySectionData::new, 255),
-		INT(2, IntArraySectionData::new, Integer.MAX_VALUE);
+		SHORT(2, ShortArraySectionData::new, Short.MAX_VALUE),
+		INT(3, IntArraySectionData::new, Integer.MAX_VALUE);
 		
+		static final ArrayType[] VALUES = values();
 		final Function<Integer, CustomSectionData> constructor;
 		final int maxValue;
 		final byte type;
