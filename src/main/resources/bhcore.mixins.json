@@ -6,11 +6,7 @@
 	"mixins": [
 		"ChunkSectionMixin"
 	],
-	"client": [
-		"BlockRendererMixin",
-		"Class66Mixin",
-		"BlockBaseMixin"
-	],
+	"client": [],
 	"injectors": {
 		"defaultRequire": 1
 	}
