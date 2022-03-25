@@ -12,7 +12,7 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 	
 	public EnumArraySectionData(int capacity, Class<E> enumClass) {
 		constants = enumClass.getEnumConstants();
-		type = getType(capacity);
+		type = getType(constants.length);
 		array = type.constructor.apply(capacity);
 		
 		if (type == ArrayType.NIBBLE) {
@@ -74,9 +74,9 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 		}
 	}
 	
-	private static ArrayType getType(int capacity) {
+	private static ArrayType getType(int valuesCount) {
 		for (ArrayType type: ArrayType.VALUES) {
-			if (capacity < type.maxValue) {
+			if (valuesCount < type.maxValue) {
 				return type;
 			}
 		}
