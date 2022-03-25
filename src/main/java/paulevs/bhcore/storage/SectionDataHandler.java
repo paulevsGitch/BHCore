@@ -1,6 +1,7 @@
 package paulevs.bhcore.storage;
 
 import net.minecraft.level.chunk.Chunk;
+import net.modificationstation.stationapi.api.registry.Identifier;
 import net.modificationstation.stationapi.impl.level.chunk.ChunkSection;
 import net.modificationstation.stationapi.impl.level.chunk.ChunkSectionsAccessor;
 import paulevs.bhcore.interfaces.CoreChunkSection;
@@ -14,10 +15,10 @@ public class SectionDataHandler {
 	private static final List<Supplier<CustomSectionData>> CONSTRUCTORS = new ArrayList<>();
 	private static final List<String> KEYS = new ArrayList<>();
 	
-	public static int register(String dataKey, Supplier<CustomSectionData> constructor) {
+	public static int register(Identifier dataKey, Supplier<CustomSectionData> constructor) {
 		int index = CONSTRUCTORS.size();
 		CONSTRUCTORS.add(constructor);
-		KEYS.add(dataKey);
+		KEYS.add(dataKey.toString());
 		return index;
 	}
 	
