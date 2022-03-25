@@ -21,11 +21,11 @@ public class NibbleArraySectionData implements CustomSectionData {
 	
 	@Override
 	public void saveToBNT(String dataKey, CompoundTag tag) {
-	
+		tag.put(dataKey, array.toTag());
 	}
 	
 	@Override
 	public void loadFromBNT(String dataKey, CompoundTag tag) {
-	
+		array.copyArray(tag.getByteArray(dataKey));
 	}
 }

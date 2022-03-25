@@ -34,7 +34,7 @@ public class SectionDataHandler {
 	}
 	
 	public static <T extends CustomSectionData> T getData(ChunkSection section, int index) {
-		return (T) CoreChunkSection.class.cast(section).getData(index);
+		return (T) CoreChunkSection.class.cast(section).bhc_getData(index);
 	}
 	
 	public static <T extends CustomSectionData> T getData(Chunk chunk, int sectionIndex, int dataIndex) {

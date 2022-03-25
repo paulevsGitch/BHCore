@@ -1,5 +1,5 @@
 package paulevs.bhcore.interfaces;
 
 public interface CoreChunkSection {
-	CustomSectionData getData(int index);
+	CustomSectionData bhc_getData(int index);
 }

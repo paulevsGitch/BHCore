@@ -3,6 +3,7 @@ package paulevs.bhcore.mixin;
 import net.minecraft.util.io.CompoundTag;
 import net.modificationstation.stationapi.impl.level.chunk.ChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,7 +29,7 @@ public class ChunkSectionMixin implements CoreChunkSection {
 		value = "INVOKE",
 		target = "Lnet/modificationstation/stationapi/impl/level/chunk/PalettedContainer;write(Lnet/minecraft/util/io/CompoundTag;Ljava/lang/String;Ljava/lang/String;)V"
 	), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onTagSave(CallbackInfoReturnable<CompoundTag> info, CompoundTag tag) {
+	public void bhc_onTagSave(CallbackInfoReturnable<CompoundTag> info, CompoundTag tag) {
 		for (int index = 0; index < data.length; index++) {
 			String key = SectionDataHandler.getKey(index);
 			data[index].saveToBNT(key, tag);
@@ -36,15 +37,16 @@ public class ChunkSectionMixin implements CoreChunkSection {
 	}
 	
 	@Inject(method = "fromNBT(Lnet/minecraft/util/io/CompoundTag;Lnet/minecraft/util/io/CompoundTag;)V", at = @At("HEAD"))
-	public void onTagLoad(CompoundTag chunkTag, CompoundTag sectionTag, CallbackInfo info) {
+	public void bhc_onTagLoad(CompoundTag chunkTag, CompoundTag sectionTag, CallbackInfo info) {
 		for (int index = 0; index < data.length; index++) {
 			String key = SectionDataHandler.getKey(index);
 			data[index].loadFromBNT(key, sectionTag);
 		}
 	}
 	
+	@Unique
 	@Override
-	public CustomSectionData getData(int index) {
+	public CustomSectionData bhc_getData(int index) {
 		return data[index];
 	}
 }
