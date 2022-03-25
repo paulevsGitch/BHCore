@@ -11,11 +11,11 @@ public class NibbleArraySectionData implements CustomSectionData {
 		array = new NibbleArray(capacity);
 	}
 	
-	public int getData(int index) {
-		return array.getValue(index);
+	public byte getData(int index) {
+		return (byte) array.getValue(index);
 	}
 	
-	public void setData(int index, int data) {
+	public void setData(int index, byte data) {
 		array.setValue(index, data);
 	}
 	
