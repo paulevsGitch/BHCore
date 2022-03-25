@@ -1,7 +1,7 @@
 <table>
     <tbody>
         <tr>
-            <td><img src="https://github.com/paulevsGitch/BHCore/blob/main/icon.png" width="200px" height="200px"/></td>        
+            <td width="210px"><img src="https://github.com/paulevsGitch/BHCore/blob/main/icon.png" width="200px" height="200px"/></td>        
             <td>
                 <h2 align="left">BHCore</h2>
                 <img src="https://jitpack.io/v/paulevsGitch/BHCore.svg">
