@@ -33,11 +33,11 @@ public class EnumArraySectionData <E extends Enum<E>> implements CustomSectionDa
 	public E getData(int index) {
 		int value = array.getIntData(index) & array.maxValue();
 		if (hasNullState) {
-			if (value == 0) return null;
+			if (value == 0 || value >= constants.length) return null;
 			return constants[value - 1];
 		}
 		else {
-			return constants[value];
+			return value >= constants.length ? constants[0] : constants[value];
 		}
 	}
 	
