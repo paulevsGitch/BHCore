@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import paulevs.bhcore.interfaces.CoreChunkSection;
 import paulevs.bhcore.interfaces.CustomSectionData;
-import paulevs.bhcore.storage.SectionDataHandler;
+import paulevs.bhcore.storage.section.SectionDataHandler;
 
 @Mixin(value = ChunkSection.class, remap = false)
 public class ChunkSectionMixin implements CoreChunkSection {

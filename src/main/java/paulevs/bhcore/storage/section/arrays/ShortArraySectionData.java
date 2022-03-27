@@ -1,12 +1,12 @@
-package paulevs.bhcore.storage;
+package paulevs.bhcore.storage.section.arrays;
 
 import net.minecraft.util.io.CompoundTag;
-import paulevs.bhcore.interfaces.CustomSectionData;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class ShortArraySectionData implements CustomSectionData {
+public class ShortArraySectionData extends AbstractIntArraySectionData {
+	private static final int MAX_VALUE = 65535;
 	private final short[] array;
 	
 	public ShortArraySectionData(int capacity) {
@@ -22,10 +22,38 @@ public class ShortArraySectionData implements CustomSectionData {
 	}
 	
 	@Override
-	public void saveToBNT(String dataKey, CompoundTag tag) {
+	public int getIntData(int index) {
+		return getData(index);
+	}
+	
+	@Override
+	public void setIntData(int index, int data) {
+		setData(index, (short) data);
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		for (short value: array) {
+			if (value != 0) return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public void saveData(String dataKey, CompoundTag tag) {
 		ByteBuffer buffer = ByteBuffer.allocate(array.length << 2).order(ByteOrder.BIG_ENDIAN);
 		for (int i = 0; i < array.length; i++) buffer.putShort(array[i]);
 		tag.put(dataKey, buffer.array());
+	}
+	
+	@Override
+	public int maxValue() {
+		return MAX_VALUE;
+	}
+	
+	@Override
+	public int length() {
+		return array.length;
 	}
 	
 	@Override
