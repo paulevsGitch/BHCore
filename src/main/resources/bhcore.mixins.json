@@ -5,9 +5,12 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"ChunkSectionMixin",
-		"NibbleArrayMixin"
+		"NibbleArrayMixin",
+		"ItemInstanceMixin"
 	],
-	"client": [],
+	"client": [
+		"ItemModelsMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}
