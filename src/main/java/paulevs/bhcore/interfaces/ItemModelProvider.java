@@ -9,5 +9,5 @@ import org.jetbrains.annotations.Nullable;
 public interface ItemModelProvider {
 	@Nullable
 	@Environment(EnvType.CLIENT)
-	BakedModel getModel(ItemInstance stack);
+	BakedModel bhc_getModel(ItemInstance stack);
 }

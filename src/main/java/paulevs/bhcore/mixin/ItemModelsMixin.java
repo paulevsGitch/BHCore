@@ -1,5 +1,6 @@
 package paulevs.bhcore.mixin;
 
+import net.minecraft.item.ItemBase;
 import net.minecraft.item.ItemInstance;
 import net.modificationstation.stationapi.api.client.render.item.ItemModels;
 import net.modificationstation.stationapi.api.client.render.model.BakedModel;
@@ -17,8 +18,9 @@ public class ItemModelsMixin {
 		cancellable = true
 	)
 	private void getModel(ItemInstance stack, CallbackInfoReturnable<BakedModel> info) {
-		if (ItemModelProvider.class.isInstance(stack)) {
-			BakedModel model = ItemModelProvider.class.cast(stack).getModel(stack);
+		ItemBase item = stack.getType();
+		if (item instanceof ItemModelProvider) {
+			BakedModel model = ItemModelProvider.class.cast(item).bhc_getModel(stack);
 			if (model != null) {
 				info.setReturnValue(model);
 			}
