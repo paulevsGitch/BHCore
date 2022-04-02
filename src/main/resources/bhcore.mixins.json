@@ -6,7 +6,6 @@
 	"mixins": [
 		"ChunkSectionMixin",
 		"NibbleArrayMixin",
-		"ItemInstanceMixin",
 		"ItemBaseMixin"
 	],
 	"client": [

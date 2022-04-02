@@ -29,13 +29,15 @@ compileJava {
     options.compilerArgs << "-XDignore.symbol.file" << "-Xlint:unchecked"
 }
 
+sourceCompatibility = 1.8
+
 apply plugin: "fabric-loom"
 
 import net.fabricmc.loom.task.RunClientTask
 import net.fabricmc.loom.task.RunServerTask
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -63,9 +65,14 @@ repositories {
 		url "https://maven.minecraftforge.net/"
 	}
 	maven {
+		name = 'Babric'
+		url = 'https://maven.glass-launcher.net/babric'
+	}
+	maven {
 		name = "Jitpack"
 		url "https://jitpack.io/"
 	}
+	mavenCentral()
 }
 
 minecraft {}
@@ -112,9 +119,10 @@ dependencies {
 	// adds some useful annotations for miscellaneous uses. does not add any dependencies, though people without the lib will be missing some useful context hints.
 	implementation 'org.jetbrains:annotations:22.0.0'
 
-	modImplementation "com.github.calmilamsy:cursed-fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.modificationstation:StationAPI:${project.stapi_version}"
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 	// For tests only
 	// modImplementation('com.github.calmilamsy:HowManyItems-Fabric-Unofficial:6af40ed') {
