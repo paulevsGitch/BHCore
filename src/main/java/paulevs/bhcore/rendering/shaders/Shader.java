@@ -1,0 +1,59 @@
+package paulevs.bhcore.rendering.shaders;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public class Shader implements AutoCloseable {
+	private final ShaderType type;
+	private final int id;
+	
+	public Shader(String source, ShaderType type) {
+		this.type = type;
+		id = GL20.glCreateShader(type.getID());
+		GL20.glShaderSource(id, readFileAsString(source));
+		GL20.glCompileShader(id);
+		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+			throw new RuntimeException("Can't create shader " + source + " with type " + type + ", reason: " + GL20.glGetShaderInfoLog(id, 512));
+		}
+	}
+	
+	public ShaderType getType() {
+		return type;
+	}
+	
+	private String readFileAsString(String path) {
+		StringBuilder builder = new StringBuilder();
+		String line;
+		try {
+			InputStream input = getClass().getResourceAsStream(path);
+			InputStreamReader streamReader = new InputStreamReader(input);
+			BufferedReader reader = new BufferedReader(streamReader);
+			while ((line = reader.readLine()) != null) {
+				if (!line.isEmpty()) {
+					builder.append(line + "\n");
+				}
+			}
+			reader.close();
+			streamReader.close();
+			input.close();
+			return builder.toString();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	@Override
+	public void close() throws Exception {
+		GL20.glDeleteShader(id);
+	}
+}
