@@ -14,27 +14,34 @@ import paulevs.bhcore.rendering.textures.TextureType;
 import java.nio.IntBuffer;
 
 @Environment(EnvType.CLIENT)
-public class MultiBuffer implements AutoCloseable {
-	private final IntBuffer drawBuffers;
+public class MultiBuffer extends FrameBuffer {
+	private final TextureUniform[] uniforms;
 	private final Texture2D[] textures;
+	private final IntBuffer drawBuffers;
 	private final Texture2D depth;
-	private final int fbo;
 	
-	private TextureUniform[] uniforms;
-	
-	protected MultiBuffer(int width, int height, boolean hasDepth, Texture2D[] textures, String[] textureNames, ShaderProgram program) {
+	/**
+	 * Create new multiple buffer for multiple textures.
+	 * Buffers are used to render data into them directly instead of rendering on screen.
+	 * MultiBuffer allows output more different values from shader program.
+	 * @param program {@link ShaderProgram} that will put its output into the buffer. Program uniforms will be linked to buffer textures using their names.
+	 * @param textures array of {@link Texture2D} to output data into.
+	 * @param textureNames array of {@link String} texture names to construct links between shader program output and textures.
+	 * @param hasDepth if {@code true} buffer will write depth information (also allows GL_DEPTH_TEST).
+	 */
+	protected MultiBuffer(ShaderProgram program, Texture2D[] textures, String[] textureNames, boolean hasDepth) {
 		drawBuffers = BufferUtils.createIntBuffer(textures.length);
 		this.textures = textures;
 		
-		fbo = GL30.glGenFramebuffers();
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
-		
-		this.depth = hasDepth ? new Texture2D(width, height, TextureType.DEPTH) : null;
+		Texture2D depth = null;
 		if (hasDepth) {
+			Texture2D source = textures[0];
+			depth = new Texture2D(source.getWidth(), source.getHeight(), TextureType.DEPTH);
 			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depth.getID(), 0);
 		}
+		this.depth = depth;
 		
-		for (int i = 0; i < textures.length; i++) {
+		for (byte i = 0; i < textures.length; i++) {
 			int attachment = GL30.GL_COLOR_ATTACHMENT0 + i;
 			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, textures[i].getID(), 0);
 			drawBuffers.put(attachment);
@@ -55,28 +62,13 @@ public class MultiBuffer implements AutoCloseable {
 		}
 	}
 	
+	@Override
 	public void resize(int width, int height) {
 		if (depth != null) {
 			depth.resize(width, height);
 		}
 		for (Texture2D texture: textures) {
 			texture.resize(width, height);
-		}
-	}
-	
-	public void bind() {
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
-	}
-	
-	public static void unbind() {
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-	}
-	
-	@Override
-	public void close() throws Exception {
-		GL30.glDeleteFramebuffers(fbo);
-		for (Texture2D texture: textures) {
-			texture.close();
 		}
 	}
 }
