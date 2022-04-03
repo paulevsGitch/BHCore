@@ -1,5 +1,7 @@
 package paulevs.bhcore.rendering.shaders.buffers;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -11,6 +13,7 @@ import paulevs.bhcore.rendering.textures.TextureType;
 
 import java.nio.IntBuffer;
 
+@Environment(EnvType.CLIENT)
 public class MultiBuffer implements AutoCloseable {
 	private final IntBuffer drawBuffers;
 	private final Texture2D[] textures;

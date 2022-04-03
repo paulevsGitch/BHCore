@@ -1,5 +1,7 @@
 package paulevs.bhcore.rendering.shaders.buffers;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import paulevs.bhcore.rendering.shaders.ShaderProgram;
 import paulevs.bhcore.rendering.textures.Texture2D;
 import paulevs.bhcore.rendering.textures.TextureType;
@@ -7,6 +9,7 @@ import paulevs.bhcore.rendering.textures.TextureType;
 import java.util.ArrayList;
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class MultiBufferBuilder {
 	private static final MultiBufferBuilder INSTANCE = new MultiBufferBuilder();
 	

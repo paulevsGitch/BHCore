@@ -1,5 +1,7 @@
 package paulevs.bhcore.rendering.shaders;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -7,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+@Environment(EnvType.CLIENT)
 public class Shader implements AutoCloseable {
 	private final ShaderType type;
 	private final int id;

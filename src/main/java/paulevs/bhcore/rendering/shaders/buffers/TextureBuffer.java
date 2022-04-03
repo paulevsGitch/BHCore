@@ -1,14 +1,22 @@
 package paulevs.bhcore.rendering.shaders.buffers;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import paulevs.bhcore.rendering.textures.Texture2D;
 
+@Environment(EnvType.CLIENT)
 public class TextureBuffer implements AutoCloseable {
-	private final Texture2D texture;
+	private Texture2D texture;
 	private final int fbo;
 	
-	public TextureBuffer(Texture2D texture, int width, int height) {
+	/**
+	 * Create new texture buffer to use in shaders.
+	 * Buffers are used to render data into them directly instead of rendering on screen.
+	 * @param texture {@link Texture2D} to render buffer in.
+	 */
+	public TextureBuffer(Texture2D texture) {
 		this.texture = texture;
 		fbo = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
@@ -16,14 +24,27 @@ public class TextureBuffer implements AutoCloseable {
 		unbind();
 	}
 	
+	/**
+	 * Changes size of current buffer.
+	 * @param width buffer width (X axis).
+	 * @param height buffer height (Y axis).
+	 */
 	public void resize(int width, int height) {
-		texture.resize(width, height);
+		if (texture.getWidth() != width || texture.getHeight() != height) {
+			texture.resize(width, height);
+		}
 	}
 	
+	/**
+	 * Binds current buffer. All render calls after that will be applied to buffer.
+	 */
 	public void bind() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
 	}
 	
+	/**
+	 * Unbinds any buffer (set binded buffer to zero)
+	 */
 	public static void unbind() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}

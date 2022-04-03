@@ -1,5 +1,7 @@
 package paulevs.bhcore.rendering.shaders;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import paulevs.bhcore.rendering.shaders.uniforms.Uniform;
@@ -8,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Environment(EnvType.CLIENT)
 public class ShaderProgram implements AutoCloseable {
 	private Map<String, Uniform> uniforms = new HashMap<>();
 	private final Shader[] shaders;
