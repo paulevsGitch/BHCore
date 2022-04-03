@@ -4,13 +4,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import paulevs.bhcore.interfaces.Disposable;
+import paulevs.bhcore.util.DisposeUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 @Environment(EnvType.CLIENT)
-public class Shader implements AutoCloseable {
+public class Shader implements Disposable {
 	private final ShaderType type;
 	private final int id;
 	
@@ -22,6 +24,7 @@ public class Shader implements AutoCloseable {
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
 			throw new RuntimeException("Can't create shader " + source + " with type " + type + ", reason: " + GL20.glGetShaderInfoLog(id, 512));
 		}
+		DisposeUtil.addObject(this);
 	}
 	
 	public ShaderType getType() {
@@ -56,7 +59,7 @@ public class Shader implements AutoCloseable {
 	}
 	
 	@Override
-	public void close() throws Exception {
+	public void dispose() {
 		GL20.glDeleteShader(id);
 	}
 }

@@ -3,9 +3,11 @@ package paulevs.bhcore.rendering.shaders.buffers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL30;
+import paulevs.bhcore.interfaces.Disposable;
+import paulevs.bhcore.util.DisposeUtil;
 
 @Environment(EnvType.CLIENT)
-public abstract class FrameBuffer implements AutoCloseable {
+public abstract class FrameBuffer implements Disposable {
 	private final int fbo;
 	
 	/**
@@ -15,6 +17,7 @@ public abstract class FrameBuffer implements AutoCloseable {
 	public FrameBuffer() {
 		fbo = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
+		DisposeUtil.addObject(this);
 	}
 	
 	/**
@@ -39,7 +42,7 @@ public abstract class FrameBuffer implements AutoCloseable {
 	public abstract void resize(int width, int height);
 	
 	@Override
-	public void close() {
+	public void dispose() {
 		GL30.glDeleteFramebuffers(fbo);
 	}
 }

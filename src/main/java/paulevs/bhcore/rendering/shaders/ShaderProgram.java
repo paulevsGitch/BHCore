@@ -4,14 +4,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import paulevs.bhcore.interfaces.Disposable;
 import paulevs.bhcore.rendering.shaders.uniforms.Uniform;
+import paulevs.bhcore.util.DisposeUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public class ShaderProgram implements AutoCloseable {
+public class ShaderProgram implements Disposable {
 	private Map<String, Uniform> uniforms = new HashMap<>();
 	private final Shader[] shaders;
 	private final int id;
@@ -31,6 +33,7 @@ public class ShaderProgram implements AutoCloseable {
 			throw new RuntimeException("Can't validate shader program, reason: " + GL20.glGetShaderInfoLog(id, 512));
 		}
 		GL20.glLinkProgram(0);
+		DisposeUtil.addObject(this);
 	}
 	
 	public <T extends Uniform> T getUniform(String name, Function<Integer, T> constructor) {
@@ -59,9 +62,9 @@ public class ShaderProgram implements AutoCloseable {
 	}
 	
 	@Override
-	public void close() throws Exception {
+	public void dispose() {
 		for (Shader shader: shaders) {
-			shader.close();
+			shader.dispose();
 		}
 		GL20.glDeleteProgram(id);
 	}

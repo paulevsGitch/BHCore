@@ -9,7 +9,8 @@
 		"ItemBaseMixin"
 	],
 	"client": [
-		"ItemModelsMixin"
+		"ItemModelsMixin",
+		"MinecraftMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

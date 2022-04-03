@@ -4,13 +4,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
+import paulevs.bhcore.interfaces.Disposable;
+import paulevs.bhcore.util.DisposeUtil;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 @Environment(EnvType.CLIENT)
-public class Texture2D implements AutoCloseable {
+public class Texture2D implements Disposable {
 	private final TextureType type;
 	private final int textureID;
 	
@@ -29,6 +31,7 @@ public class Texture2D implements AutoCloseable {
 		setTexture(image);
 		setFilter(TextureFilter.NEAREST);
 		setWrapMode(TextureWrapMode.CLAMP);
+		DisposeUtil.addObject(this);
 	}
 	
 	/**
@@ -169,7 +172,7 @@ public class Texture2D implements AutoCloseable {
 	}
 	
 	@Override
-	public void close() {
+	public void dispose() {
 		GL11.glDeleteTextures(textureID);
 	}
 	

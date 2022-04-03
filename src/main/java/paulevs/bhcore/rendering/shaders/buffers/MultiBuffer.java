@@ -71,4 +71,15 @@ public class MultiBuffer extends FrameBuffer {
 			texture.resize(width, height);
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (depth != null) {
+			depth.dispose();
+		}
+		for (Texture2D texture: textures) {
+			texture.dispose();
+		}
+	}
 }

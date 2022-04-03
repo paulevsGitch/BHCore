@@ -27,4 +27,10 @@ public class TextureBuffer extends FrameBuffer {
 			texture.resize(width, height);
 		}
 	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		texture.dispose();
+	}
 }
