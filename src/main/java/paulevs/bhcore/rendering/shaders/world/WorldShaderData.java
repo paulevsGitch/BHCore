@@ -56,6 +56,26 @@ public class WorldShaderData {
 		return texture;
 	}
 	
+	public int getDataWidth() {
+		return dataWidth;
+	}
+	
+	public int getDataHalfWidth() {
+		return halfWidth;
+	}
+	
+	public int getDataHeight() {
+		return dataWidth;
+	}
+	
+	public int getDataHalfHeight() {
+		return halfHeight;
+	}
+	
+	public int getDataSide() {
+		return dataSide;
+	}
+	
 	public void setTexturePosition(int x, int y, int z, Vec2F position) {
 		int indexX = MathUtil.wrap(x, dataWidth);
 		int indexY = MathUtil.wrap(y, dataHeight);

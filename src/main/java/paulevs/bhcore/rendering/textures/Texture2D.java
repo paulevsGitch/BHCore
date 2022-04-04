@@ -52,6 +52,15 @@ public class Texture2D implements Disposable {
 	}
 	
 	/**
+	 * Create texture wrapper for textures with known id.
+	 * @param textureID
+	 */
+	public Texture2D(int textureID, TextureType type) {
+		this.textureID = textureID;
+		this.type = type;
+	}
+	
+	/**
 	 * Get current texture ID.
 	 */
 	public int getID() {

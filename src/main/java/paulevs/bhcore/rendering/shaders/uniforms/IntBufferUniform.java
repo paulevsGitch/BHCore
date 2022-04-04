@@ -4,18 +4,19 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-public class FloatBufferUniform extends Uniform {
-	protected FloatBuffer buffer;
+public class IntBufferUniform extends Uniform {
+	protected IntBuffer buffer;
 	protected int size;
 	
-	public FloatBufferUniform(int id) {
+	public IntBufferUniform(int id) {
 		super(id);
 	}
 	
-	public void setValues(float[] values) {
+	public void setValues(int[] values) {
 		if (buffer == null || size != values.length) {
-			buffer = BufferUtils.createFloatBuffer(values.length);
+			buffer = BufferUtils.createIntBuffer(values.length);
 			size = values.length;
 		}
 		buffer.put(values);
