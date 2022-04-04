@@ -21,8 +21,8 @@ import java.nio.ByteBuffer;
 public enum TextureType {
 	RED(
 		0,
-		(width, height, buffer) -> GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RED, width, height, 0, GL12.GL_BGRA, GL11.GL_FLOAT, buffer),
-		(x, y, width, height, buffer) -> GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, width, height, GL12.GL_BGRA, GL11.GL_FLOAT, buffer)),
+		(width, height, buffer) -> GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RED, width, height, 0, GL11.GL_RED, GL11.GL_UNSIGNED_BYTE, buffer),
+		(x, y, width, height, buffer) -> GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, width, height, GL11.GL_RED, GL11.GL_UNSIGNED_BYTE, buffer)),
 	RGBA(
 		2,
 		(width, height, buffer) -> GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, buffer),

@@ -88,4 +88,11 @@ public class MathUtil {
 		}
 		return count == 1 ? 1 << index : 1 << (index + 1);
 	}
+	
+	public static int wrap(int value, int side) {
+		int offset = value / side * side;
+		if (offset > value) offset -= side;
+		float delta = (float) (value - offset) / side;
+		return (int) (delta * side);
+	}
 }

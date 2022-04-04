@@ -104,6 +104,15 @@ public class Texture2D implements Disposable {
 	}
 	
 	/**
+	 * Set texture data. Buffer data should be same size as the texture.
+	 * @param data byte array data to set.
+	 */
+	public void setTexture(byte[] data) {
+		bind();
+		update(wrapBuffer(data));
+	}
+	
+	/**
 	 * Set area of texture from {@link BufferedImage}. Width and height are taken from image.
 	 * @param image source {@link BufferedImage}.
 	 * @param x image X position.
@@ -124,6 +133,19 @@ public class Texture2D implements Disposable {
 	 * @param height height of area (Y axis).
 	 */
 	public void setArea(int[] data, int x, int y, int width, int height) {
+		bind();
+		type.genSubImage(x, y, width, height, wrapBuffer(data));
+	}
+	
+	/**
+	 * Set area of texture using byte data array.
+	 * @param data source data.
+	 * @param x image X position.
+	 * @param y image Y position.
+	 * @param width width of area (X axis).
+	 * @param height height of area (Y axis).
+	 */
+	public void setArea(byte[] data, int x, int y, int width, int height) {
 		bind();
 		type.genSubImage(x, y, width, height, wrapBuffer(data));
 	}
@@ -186,6 +208,18 @@ public class Texture2D implements Disposable {
 		for (int i = 0; i < data.length; i++) {
 			buffer.putInt(data[i]);
 		}
+		buffer.flip();
+		return buffer;
+	}
+	
+	/**
+	 * Wraps integer data array into buffer.
+	 * @param data array to wrap.
+	 * @return wrapped {@link ByteBuffer}.
+	 */
+	private ByteBuffer wrapBuffer(byte[] data) {
+		ByteBuffer buffer = initBuffer(data.length);
+		buffer.put(data);
 		buffer.flip();
 		return buffer;
 	}
