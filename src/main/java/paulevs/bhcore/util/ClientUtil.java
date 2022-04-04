@@ -7,12 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-@Environment(EnvType.CLIENT)
 public class ClientUtil {
 	/**
 	 * Get current Minecraft instance (using Fabric API).
 	 * @return {@link Minecraft} instance.
 	 */
+	@Environment(EnvType.CLIENT)
 	@SuppressWarnings("deprecation")
 	public static Minecraft getMinecraft() {
 		return Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
@@ -23,6 +23,7 @@ public class ClientUtil {
 	 * @return client {@link Level}.
 	 */
 	@Nullable
+	@Environment(EnvType.CLIENT)
 	public static Level getClientLevel() {
 		return getMinecraft().level;
 	}
@@ -31,6 +32,7 @@ public class ClientUtil {
 	 * Check if client has enabled "Fancy Graphics" option.
 	 * @return {@code true} if client has enabled Fancy Graphics.
 	 */
+	@Environment(EnvType.CLIENT)
 	public static boolean isFancyGraphics() {
 		return getMinecraft().options.fancyGraphics;
 	}

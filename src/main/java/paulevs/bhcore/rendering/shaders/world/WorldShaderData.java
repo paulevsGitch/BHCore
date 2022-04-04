@@ -80,21 +80,21 @@ public class WorldShaderData {
 		int indexX = MathUtil.wrap(x, dataWidth);
 		int indexY = MathUtil.wrap(y, dataHeight);
 		int indexZ = MathUtil.wrap(z, dataWidth);
-		int index = ((indexX * dataWidth) + indexY) * dataWidth + indexZ;
+		int index = ((indexX * dataHeight) + indexY) * dataWidth + indexZ;
 		position.x = (float) ((index % dataSide) << 6) / texture.getWidth();
 		position.y = (float) ((index / dataSide) << 6) / texture.getWidth();
 	}
 	
-	public void updateSection(Level level, int x, int y, int z) {
+	public void updateSection(Level level, int x, int y, int z, boolean force) {
 		int indexX = MathUtil.wrap(x, dataWidth);
 		int indexY = MathUtil.wrap(y, dataHeight);
 		int indexZ = MathUtil.wrap(z, dataWidth);
 		ShaderSectionData section = data[indexX][indexY][indexZ];
-		if (!section.hasCorrectPosition(x, y, z)) {
+		if (force || !section.hasCorrectPosition(x, y, z)) {
 			section.setPosition(x, y, z);
 			byte[] sectionData = section.getData();
 			updateFunction.accept(level, POS.set(x, y, z), sectionData);
-			int index = ((indexX * dataWidth) + indexY) * dataWidth + indexZ;
+			int index = ((indexX * dataHeight) + indexY) * dataWidth + indexZ;
 			int textureX = (index % dataSide) << 6;
 			int textureY = (index / dataSide) << 6;
 			texture.setArea(sectionData, textureX, textureY, 64, 64);
@@ -116,7 +116,7 @@ public class WorldShaderData {
 				for (int k = 0; k < dataHeight; k++) {
 					int py = cy - halfHeight + k;
 					if (py < 0 || py >= height) continue;
-					updateSection(level, px, py, pz);
+					updateSection(level, px, py, pz, false);
 				}
 			}
 		}
