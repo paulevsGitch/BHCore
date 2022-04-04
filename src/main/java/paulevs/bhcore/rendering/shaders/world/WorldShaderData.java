@@ -10,6 +10,7 @@ import paulevs.bhcore.rendering.textures.Texture2D;
 import paulevs.bhcore.rendering.textures.TextureFilter;
 import paulevs.bhcore.rendering.textures.TextureType;
 import paulevs.bhcore.rendering.textures.TextureWrapMode;
+import paulevs.bhcore.storage.vector.Vec2F;
 import paulevs.bhcore.storage.vector.Vec3I;
 import paulevs.bhcore.util.MathUtil;
 import uk.co.benjiweber.expressions.function.TriConsumer;
@@ -55,6 +56,15 @@ public class WorldShaderData {
 		return texture;
 	}
 	
+	public void setTexturePosition(int x, int y, int z, Vec2F position) {
+		int indexX = MathUtil.wrap(x, dataWidth);
+		int indexY = MathUtil.wrap(y, dataHeight);
+		int indexZ = MathUtil.wrap(z, dataWidth);
+		int index = ((indexX * dataWidth) + indexY) * dataWidth + indexZ;
+		position.x = (float) ((index % dataSide) << 6) / texture.getWidth();
+		position.y = (float) ((index / dataSide) << 6) / texture.getWidth();
+	}
+	
 	public void updateSection(Level level, int x, int y, int z) {
 		int indexX = MathUtil.wrap(x, dataWidth);
 		int indexY = MathUtil.wrap(y, dataHeight);
@@ -73,7 +83,7 @@ public class WorldShaderData {
 	
 	public void update(PlayerBase player) {
 		Level level = player.level;
-		short height = StationDimension.class.cast(level.dimension).getActualLevelHeight();
+		short height = StationDimension.class.cast(level.dimension).getSectionCount();
 		int cy = ((int) player.y) >> 4;
 		int cx = player.chunkX;
 		int cz = player.chunkZ;

@@ -3,19 +3,15 @@ package paulevs.bhcore.rendering.shaders.uniforms;
 import org.lwjgl.opengl.GL20;
 import paulevs.bhcore.storage.vector.Vec3F;
 
-public class VectorUniform extends Uniform {
+public class Vec3FUniform extends Uniform {
 	private Vec3F vector = new Vec3F();
 	
-	public VectorUniform(int id) {
+	public Vec3FUniform(int id) {
 		super(id);
 	}
 	
-	public void setVector(Vec3F vector) {
-		this.vector = vector;
-	}
-	
-	public void set(double x, double y, double z) {
-		set((float) x, (float) y, (float) z);
+	public Vec3F getVector() {
+		return vector;
 	}
 	
 	public void set(float x, float y, float z) {
