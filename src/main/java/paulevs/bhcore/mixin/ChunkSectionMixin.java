@@ -13,7 +13,7 @@ import paulevs.bhcore.interfaces.CoreChunkSection;
 import paulevs.bhcore.interfaces.CustomSectionData;
 import paulevs.bhcore.storage.section.SectionDataHandler;
 
-@Mixin(value = ChunkSection.class, remap = false)
+@Mixin(value = ChunkSection.class)
 public class ChunkSectionMixin implements CoreChunkSection {
 	@Unique private CustomSectionData[] bhc_sectionData;
 	
