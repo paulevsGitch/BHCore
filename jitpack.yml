@@ -1,7 +1,6 @@
-jdk:
-  - openjdk17
+# From https://github.com/jitpack/jitpack.io/issues/4506#issuecomment-864562270
 before_install:
-  - echo "Before Install"
-  - ./ensure-java-17 install
-
-# Thanks to https://github.com/jitpack/jitpack.io/issues/4355#issuecomment-744678253
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
+  - sdk update
+  - sdk install java 17.0.1-tem
+  - sdk use java 17.0.1-tem
