@@ -2,14 +2,14 @@ package paulevs.bhcore.util;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.spongepowered.include.com.google.common.collect.Lists;
 import paulevs.bhcore.interfaces.Disposable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class DisposeUtil {
-	private static final List<Disposable> OBJECTS_TO_DISPOSE = Lists.newArrayList();
+	private static final List<Disposable> OBJECTS_TO_DISPOSE = new ArrayList<>();
 	
 	/**
 	 * Add object into internal list. All objects from this list will be disposed when Minecraft will stop running.
