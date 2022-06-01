@@ -1,5 +1,7 @@
 package paulevs.bhcore.storage.vector;
 
+import net.modificationstation.stationapi.api.util.math.Direction;
+
 import java.util.Locale;
 
 public class Vec3I {
@@ -56,6 +58,14 @@ public class Vec3I {
         return subtract(vector.x, vector.y, vector.z);
     }
     
+	public Vec3I move(Direction dir) {
+		return add(dir.vector.x, dir.vector.y, dir.vector.z);
+	}
+	
+	public Vec3I move(Direction dir, int distance) {
+		return add(dir.vector.x * distance, dir.vector.y * distance, dir.vector.z * distance);
+	}
+	
     @Override
     public Vec3I clone() {
 	    return new Vec3I(x, y, z);

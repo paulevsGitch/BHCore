@@ -14,7 +14,7 @@ public class MinecraftMixin {
 	@Inject(method = "init()V", at = @At("TAIL"))
 	public void bhc_init(CallbackInfo info) {
 		ModUtil.init();
-		DefaultShaderPrograms.init();
+		//DefaultShaderPrograms.init();
 	}
 	
 	@Inject(method = "stop()V", at = @At("HEAD"))
