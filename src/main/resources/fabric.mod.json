@@ -9,13 +9,12 @@
 		"paulevs"
 	],
 	"contact": {
-		"homepage": "",
-		"sources": "",
-		"issues": "",
-		"discord": ""
+		"sources": "https://github.com/paulevsGitch/BHCore",
+		"issues": "https://github.com/paulevsGitch/BHCore/issues",
+		"discord": "https://discord.gg/qxcP8EjkUC"
 	},
 
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/bhcore/icon.png",
 
 	"environment": "*",
