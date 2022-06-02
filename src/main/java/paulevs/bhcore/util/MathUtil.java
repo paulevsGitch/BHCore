@@ -1,6 +1,13 @@
 package paulevs.bhcore.util;
 
+import net.modificationstation.stationapi.api.util.math.Direction;
+
 public class MathUtil {
+	public static final Direction[] DIRECTIONS = Direction.values();
+	public static final Direction[] HORIZONTAL = {
+		Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+	};
+	
 	/**
 	 * Clamps value to specified range.
 	 * @param value - Value to clamp.
@@ -94,5 +101,21 @@ public class MathUtil {
 		if (offset > value) offset -= side;
 		float delta = (float) (value - offset) / side;
 		return (int) (delta * side);
+	}
+	
+	/**
+	 * Rotate direction clockwise.
+	 * @param dir {@link Direction} to rotate
+	 * @return rotated {@link Direction}
+	 */
+	public static Direction rotateCW(Direction dir) {
+		Direction result = dir;
+		switch (dir) {
+			case NORTH -> result = Direction.EAST;
+			case SOUTH -> result = Direction.WEST;
+			case EAST -> result = Direction.SOUTH;
+			case WEST -> result = Direction.NORTH;
+		}
+		return result;
 	}
 }

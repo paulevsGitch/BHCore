@@ -9,8 +9,6 @@ import net.modificationstation.stationapi.api.util.math.Direction;
 import paulevs.bhcore.storage.vector.Vec3I;
 
 public class BlocksUtil {
-	private static final Direction[] DIRECTIONS = Direction.values();
-	
 	/**
 	 * Set block state in world.
 	 * @param level {@link BlockView}, {@link Level} or {@link WorldPopulationRegion}
@@ -61,6 +59,6 @@ public class BlocksUtil {
 	 * @return {@link Direction} that matches facing
 	 */
 	public static Direction fromFacing(int facing) {
-		return DIRECTIONS[facing];
+		return MathUtil.DIRECTIONS[facing];
 	}
 }
