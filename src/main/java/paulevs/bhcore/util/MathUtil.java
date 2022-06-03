@@ -2,9 +2,15 @@ package paulevs.bhcore.util;
 
 import net.modificationstation.stationapi.api.util.math.Direction;
 
+import java.util.Random;
+
 public class MathUtil {
 	public static final Direction[] DIRECTIONS = Direction.values();
+	private static final Direction[] DIRECTIONS_RANDOM = Direction.values();
 	public static final Direction[] HORIZONTAL = {
+		Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+	};
+	private static final Direction[] HORIZONTAL_RANDOM = {
 		Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
 	};
 	
@@ -117,5 +123,61 @@ public class MathUtil {
 			case WEST -> result = Direction.NORTH;
 		}
 		return result;
+	}
+	
+	/**
+	 * Get random integer value in range.
+	 * @param min min value, inclusive
+	 * @param max max value, inclusive
+	 * @param random {@link Random}
+	 * @return int value in range
+	 */
+	public static int randomRange(int min, int max, Random random) {
+		return min + random.nextInt(max - min + 1);
+	}
+	
+	/**
+	 * Get random float value in range.
+	 * @param min min value, inclusive
+	 * @param max max value, inclusive
+	 * @param random {@link Random}
+	 * @return float value in range
+	 */
+	public static float randomRange(float min, float max, Random random) {
+		return min + random.nextFloat() * (max - min);
+	}
+	
+	/**
+	 * Shuffle array - keeps all values, but changes their order randomly.
+	 * @param array an array to shuffle
+	 * @param random {@link Random}
+	 */
+	public static <T> void shuffle(T[] array, Random random) {
+		for (int i = 0; i < array.length; i++) {
+			int i2 = random.nextInt(array.length);
+			T val = array[i];
+			array[i] = array[i2];
+			array[i2] = val;
+		}
+	}
+	
+	/**
+	 * Get random horizontal directions. Will return same array instance.
+	 * @param random {@link Random}
+	 * @return array of horizontal {@link Direction}
+	 */
+	public static Direction[] getRandomHorizontal(Random random) {
+		shuffle(HORIZONTAL_RANDOM, random);
+		return HORIZONTAL_RANDOM;
+	}
+	
+	/**
+	 * Get random directions. Will return same array instance.
+	 * @param random {@link Random}
+	 * @return array of {@link Direction}
+	 */
+	public static Direction[] getRandomDrections(Random random) {
+		shuffle(DIRECTIONS_RANDOM, random);
+		return DIRECTIONS_RANDOM;
 	}
 }
