@@ -6,7 +6,8 @@
 	"mixins": [
 		"ChunkSectionMixin",
 		"NibbleArrayMixin",
-		"ItemBaseMixin"
+		"ItemBaseMixin",
+		"ChunkMixin"
 	],
 	"client": [
 		"MinecraftMixin"
