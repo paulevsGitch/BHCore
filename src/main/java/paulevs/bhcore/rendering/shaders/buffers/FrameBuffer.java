@@ -17,7 +17,6 @@ public abstract class FrameBuffer implements Disposable {
 	 */
 	public FrameBuffer() {
 		unbind();
-		RenderSystem.assertOnRenderThread();
 		fbo = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
 		DisposeUtil.addObject(this);
