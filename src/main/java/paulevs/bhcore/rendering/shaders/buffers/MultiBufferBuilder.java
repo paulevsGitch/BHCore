@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class MultiBufferBuilder {
-	private static final MultiBufferBuilder INSTANCE = new MultiBufferBuilder();
+	private static MultiBufferBuilder instance;
 	
 	private final Map<String, Texture2D> textures = new HashMap<>();
 	private Texture2D depth;
@@ -27,11 +27,12 @@ public class MultiBufferBuilder {
 	 * @return same {@link MultiBufferBuilder} instance.
 	 */
 	public static MultiBufferBuilder start(int width, int height) {
-		INSTANCE.textures.clear();
-		INSTANCE.depth = null;
-		INSTANCE.height = height;
-		INSTANCE.width = width;
-		return INSTANCE;
+		if (instance == null) instance = new MultiBufferBuilder();
+		instance.textures.clear();
+		instance.depth = null;
+		instance.height = height;
+		instance.width = width;
+		return instance;
 	}
 	
 	/**

@@ -48,7 +48,7 @@ public class Texture2D implements Disposable {
 		bind();
 		setFilter(TextureFilter.NEAREST);
 		setWrapMode(TextureWrapMode.CLAMP);
-		update(ByteBuffer.allocateDirect(width * height));
+		update(ByteBuffer.allocateDirect(type.getCapacity(width * height)));
 	}
 	
 	/**

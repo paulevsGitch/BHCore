@@ -41,7 +41,6 @@ public class MultiBuffer extends FrameBuffer {
 		this.depth = depthTexture;
 		
 		if (depthTexture != null) {
-			this.bind();
 			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture.getID(), 0);
 		}
 		
@@ -49,6 +48,7 @@ public class MultiBuffer extends FrameBuffer {
 			for (byte i = 0; i < size; i++) {
 				int attachment = GL30.GL_COLOR_ATTACHMENT0 + i;
 				this.bind();
+				this.textures[i].bind();
 				GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, this.textures[i].getID(), 0);
 				drawBuffers.put(attachment);
 			}

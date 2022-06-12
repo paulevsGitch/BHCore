@@ -2,6 +2,7 @@ package paulevs.bhcore.rendering.shaders.buffers;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.modificationstation.stationapi.api.client.blaze3d.systems.RenderSystem;
 import org.lwjgl.opengl.GL30;
 import paulevs.bhcore.interfaces.Disposable;
 import paulevs.bhcore.util.DisposeUtil;
@@ -15,9 +16,12 @@ public abstract class FrameBuffer implements Disposable {
 	 * Frame buffers are used to render data into them directly instead of rendering on screen.
 	 */
 	public FrameBuffer() {
+		unbind();
+		RenderSystem.assertOnRenderThread();
 		fbo = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo);
 		DisposeUtil.addObject(this);
+		bind();
 	}
 	
 	/**
@@ -50,8 +54,19 @@ public abstract class FrameBuffer implements Disposable {
 	 * Check framebuffer status and throw an exception.
 	 */
 	protected void checkStatus() {
-		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
-			throw new RuntimeException("Can't create a FrameBuffer (MultiBuffer): " + GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER));
+		int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+		if (status != GL30.GL_FRAMEBUFFER_COMPLETE) {
+			String error = "";
+			switch (status) {
+				case GL30.GL_FRAMEBUFFER_UNSUPPORTED -> error = "GL_FRAMEBUFFER_UNSUPPORTED";
+				case GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT -> error = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+				case GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT -> error = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+				case GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER -> error = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+				case GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE -> error = "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+				case GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER -> error = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+			}
+			if (error.isEmpty()) error = Integer.toString(status);
+			throw new RuntimeException("Can't create a FrameBuffer (" + getClass().getName() + "): " + error);
 		}
 	}
 }

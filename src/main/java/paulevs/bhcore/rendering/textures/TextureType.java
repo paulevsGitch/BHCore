@@ -29,7 +29,7 @@ public enum TextureType {
 		(x, y, width, height, buffer) -> GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, width, height, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, buffer)
 	),
 	DEPTH(
-		2,
+		4,
 		(width, height, buffer) -> GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, buffer),
 		(x, y, width, height, buffer) -> GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, width, height, GL12.GL_BGRA, GL11.GL_FLOAT, buffer)
 	),
