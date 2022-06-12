@@ -60,7 +60,10 @@ public class MultiBuffer extends FrameBuffer {
 		GL11.glDrawBuffer(GL11.GL_NONE);
 		GL11.glReadBuffer(GL11.GL_NONE);
 		
+		unbind();
+		
 		if (size > 0 && program != null) {
+			program.bind();
 			GL20.glDrawBuffers(this.drawBuffers);
 			AtomicInteger index = new AtomicInteger(0);
 			textures.forEach((name, texture) -> {
@@ -68,9 +71,8 @@ public class MultiBuffer extends FrameBuffer {
 				this.uniforms[i] = program.getUniform(name, TextureUniform::new);
 				this.uniforms[i].setTexture(texture);
 			});
+			ShaderProgram.unbind();
 		}
-		
-		unbind();
 	}
 	
 	@Nullable

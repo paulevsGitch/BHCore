@@ -32,8 +32,8 @@ public class ShaderProgram implements Disposable {
 		if (GL20.glGetShaderi(id, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
 			throw new RuntimeException("Can't validate shader program, reason: " + GL20.glGetShaderInfoLog(id, 512));
 		}
-		GL20.glLinkProgram(0);
 		DisposeUtil.addObject(this);
+		unbind();
 	}
 	
 	public <T extends Uniform> T getUniform(String name, Function<Integer, T> constructor) {
