@@ -18,6 +18,9 @@ public class TextureBuffer extends FrameBuffer {
 	public TextureBuffer(Texture2D texture) {
 		this.texture = texture;
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, texture.getID(), 0);
+		checkStatus();
+		GL11.glDrawBuffer(GL11.GL_NONE);
+		GL11.glReadBuffer(GL11.GL_NONE);
 		unbind();
 	}
 	

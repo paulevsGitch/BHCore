@@ -32,6 +32,8 @@ public class MultiBuffer extends FrameBuffer {
 	 * Program uniforms will be linked to buffer textures using their names. Can be null.
 	 */
 	protected MultiBuffer(Map<String, Texture2D> textures, Texture2D depthTexture, ShaderProgram program) {
+		super();
+		
 		final int size = textures.size();
 		this.textures = textures.values().toArray(new Texture2D[size]);
 		this.drawBuffers = size > 0 ? BufferUtils.createIntBuffer(size) : null;
@@ -39,27 +41,30 @@ public class MultiBuffer extends FrameBuffer {
 		this.depth = depthTexture;
 		
 		if (depthTexture != null) {
+			this.bind();
 			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture.getID(), 0);
 		}
 		
 		if (size > 0) {
 			for (byte i = 0; i < size; i++) {
 				int attachment = GL30.GL_COLOR_ATTACHMENT0 + i;
+				this.bind();
 				GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, this.textures[i].getID(), 0);
 				drawBuffers.put(attachment);
 			}
 			drawBuffers.flip();
 		}
 		
-		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
-			throw new RuntimeException("Can't create a FrameBuffer (MultiBuffer): " + GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER));
-		}
+		checkStatus();
+		
+		GL11.glDrawBuffer(GL11.GL_NONE);
+		GL11.glReadBuffer(GL11.GL_NONE);
 		
 		if (size > 0 && program != null) {
 			GL20.glDrawBuffers(this.drawBuffers);
-			AtomicInteger idex = new AtomicInteger();
+			AtomicInteger index = new AtomicInteger(0);
 			textures.forEach((name, texture) -> {
-				int i = idex.getAndIncrement();
+				int i = index.getAndIncrement();
 				this.uniforms[i] = program.getUniform(name, TextureUniform::new);
 				this.uniforms[i].setTexture(texture);
 			});

@@ -45,4 +45,13 @@ public abstract class FrameBuffer implements Disposable {
 	public void dispose() {
 		GL30.glDeleteFramebuffers(fbo);
 	}
+	
+	/**
+	 * Check framebuffer status and throw an exception.
+	 */
+	protected void checkStatus() {
+		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
+			throw new RuntimeException("Can't create a FrameBuffer (MultiBuffer): " + GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER));
+		}
+	}
 }
