@@ -1,19 +1,13 @@
 package paulevs.bhcore.rendering.shaders.complex;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.modificationstation.stationapi.api.registry.Identifier;
-import net.modificationstation.stationapi.api.resource.ResourceManager;
 import paulevs.bhcore.rendering.shaders.Shader;
 import paulevs.bhcore.rendering.shaders.ShaderProgram;
 import paulevs.bhcore.rendering.shaders.ShaderType;
-import paulevs.bhcore.rendering.shaders.uniforms.Uniform;
 import paulevs.bhcore.util.ModUtil;
 import paulevs.bhcore.util.ResourceUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 public class ComplexShaderProgram extends ShaderProgram {
 	private ComplexShaderProgram(Shader vertShader, Shader geomShader, Shader fragShader) {

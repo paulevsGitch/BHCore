@@ -6,16 +6,15 @@ import paulevs.bhcore.rendering.shaders.ShaderProgram;
 import paulevs.bhcore.rendering.textures.Texture2D;
 import paulevs.bhcore.rendering.textures.TextureType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class MultiBufferBuilder {
 	private static final MultiBufferBuilder INSTANCE = new MultiBufferBuilder();
 	
-	private final List<String> textureNames = new ArrayList<>();
-	private final List<Texture2D> textures = new ArrayList<>();
-	private boolean hasDepth;
+	private final Map<String, Texture2D> textures = new HashMap<>();
+	private Texture2D depth;
 	private int height;
 	private int width;
 	
@@ -28,9 +27,8 @@ public class MultiBufferBuilder {
 	 * @return same {@link MultiBufferBuilder} instance.
 	 */
 	public static MultiBufferBuilder start(int width, int height) {
-		INSTANCE.textureNames.clear();
 		INSTANCE.textures.clear();
-		INSTANCE.hasDepth = false;
+		INSTANCE.depth = null;
 		INSTANCE.height = height;
 		INSTANCE.width = width;
 		return INSTANCE;
@@ -41,7 +39,7 @@ public class MultiBufferBuilder {
 	 * @return same {@link MultiBufferBuilder} instance.
 	 */
 	public MultiBufferBuilder addDepthMap() {
-		hasDepth = true;
+		depth = new Texture2D(width, height, TextureType.DEPTH);
 		return this;
 	}
 	
@@ -71,8 +69,8 @@ public class MultiBufferBuilder {
 	 * @return same {@link MultiBufferBuilder} instance.
 	 */
 	public MultiBufferBuilder addTexture(String name, Texture2D texture) {
-		textures.add(texture);
-		textureNames.add(name);
+		if (textures.containsKey(name)) throw new RuntimeException("Texture with name " + name + " already exists!");
+		textures.put(name, texture);
 		return this;
 	}
 	
@@ -82,8 +80,14 @@ public class MultiBufferBuilder {
 	 * @return new {@link MultiBuffer} instance.
 	 */
 	public MultiBuffer build(ShaderProgram program) {
-		String[] names = textureNames.toArray(new String[textureNames.size()]);
-		Texture2D[] textures = this.textures.toArray(new Texture2D[this.textures.size()]);
-		return new MultiBuffer(program, textures, names, hasDepth);
+		return new MultiBuffer(textures, depth, program);
+	}
+	
+	/**
+	 * Construct {@link MultiBuffer} and finish building process.
+	 * @return new {@link MultiBuffer} instance.
+	 */
+	public MultiBuffer build() {
+		return build(null);
 	}
 }

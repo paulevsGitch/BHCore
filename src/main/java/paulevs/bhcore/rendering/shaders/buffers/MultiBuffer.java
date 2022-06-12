@@ -2,6 +2,7 @@ package paulevs.bhcore.rendering.shaders.buffers;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -9,9 +10,10 @@ import org.lwjgl.opengl.GL30;
 import paulevs.bhcore.rendering.shaders.ShaderProgram;
 import paulevs.bhcore.rendering.shaders.uniforms.TextureUniform;
 import paulevs.bhcore.rendering.textures.Texture2D;
-import paulevs.bhcore.rendering.textures.TextureType;
 
 import java.nio.IntBuffer;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Environment(EnvType.CLIENT)
 public class MultiBuffer extends FrameBuffer {
@@ -24,42 +26,51 @@ public class MultiBuffer extends FrameBuffer {
 	 * Create new multiple buffer for multiple textures.
 	 * Buffers are used to render data into them directly instead of rendering on screen.
 	 * MultiBuffer allows output more different values from shader program.
-	 * @param program {@link ShaderProgram} that will put its output into the buffer. Program uniforms will be linked to buffer textures using their names.
-	 * @param textures array of {@link Texture2D} to output data into.
-	 * @param textureNames array of {@link String} texture names to construct links between shader program output and textures.
-	 * @param hasDepth if {@code true} buffer will write depth information (also allows GL_DEPTH_TEST).
+	 * @param textures map of {@link Texture2D} with names to output data into.
+	 * @param depthTexture {@link Texture2D} to use as depth map. Can be null.
+	 * @param program {@link ShaderProgram} that will put its output into the buffer.
+	 * Program uniforms will be linked to buffer textures using their names. Can be null.
 	 */
-	protected MultiBuffer(ShaderProgram program, Texture2D[] textures, String[] textureNames, boolean hasDepth) {
-		drawBuffers = BufferUtils.createIntBuffer(textures.length);
-		this.textures = textures;
+	protected MultiBuffer(Map<String, Texture2D> textures, Texture2D depthTexture, ShaderProgram program) {
+		final int size = textures.size();
+		this.textures = textures.values().toArray(new Texture2D[size]);
+		this.drawBuffers = size > 0 ? BufferUtils.createIntBuffer(size) : null;
+		this.uniforms = new TextureUniform[size];
+		this.depth = depthTexture;
 		
-		Texture2D depth = null;
-		if (hasDepth) {
-			Texture2D source = textures[0];
-			depth = new Texture2D(source.getWidth(), source.getHeight(), TextureType.DEPTH);
-			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depth.getID(), 0);
+		if (depthTexture != null) {
+			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture.getID(), 0);
 		}
-		this.depth = depth;
 		
-		for (byte i = 0; i < textures.length; i++) {
-			int attachment = GL30.GL_COLOR_ATTACHMENT0 + i;
-			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, textures[i].getID(), 0);
-			drawBuffers.put(attachment);
+		if (size > 0) {
+			for (byte i = 0; i < size; i++) {
+				int attachment = GL30.GL_COLOR_ATTACHMENT0 + i;
+				GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, GL11.GL_TEXTURE_2D, this.textures[i].getID(), 0);
+				drawBuffers.put(attachment);
+			}
+			drawBuffers.flip();
 		}
-		drawBuffers.flip();
 		
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			throw new RuntimeException("Can't create a FrameBuffer (MultiBuffer): " + GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER));
 		}
 		
-		GL20.glDrawBuffers(drawBuffers);
-		unbind();
-		
-		uniforms = new TextureUniform[textures.length];
-		for (int i = 0; i < uniforms.length; i++) {
-			uniforms[i] = program.getUniform(textureNames[i], TextureUniform::new);
-			uniforms[i].setTexture(textures[i]);
+		if (size > 0 && program != null) {
+			GL20.glDrawBuffers(this.drawBuffers);
+			AtomicInteger idex = new AtomicInteger();
+			textures.forEach((name, texture) -> {
+				int i = idex.getAndIncrement();
+				this.uniforms[i] = program.getUniform(name, TextureUniform::new);
+				this.uniforms[i].setTexture(texture);
+			});
 		}
+		
+		unbind();
+	}
+	
+	@Nullable
+	public Texture2D getDepth() {
+		return depth;
 	}
 	
 	@Override
