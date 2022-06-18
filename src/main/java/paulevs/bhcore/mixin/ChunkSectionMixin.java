@@ -4,11 +4,6 @@ import net.minecraft.util.io.CompoundTag;
 import net.modificationstation.stationapi.impl.level.chunk.ChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import paulevs.bhcore.interfaces.CoreChunkSection;
 import paulevs.bhcore.interfaces.CustomSectionData;
 import paulevs.bhcore.storage.section.SectionDataHandler;
@@ -17,7 +12,7 @@ import paulevs.bhcore.storage.section.SectionDataHandler;
 public class ChunkSectionMixin implements CoreChunkSection {
 	@Unique private CustomSectionData[] bhc_sectionData;
 	
-	@Inject(method = "<init>(SSSS)V", at = @At("TAIL"))
+	/*@Inject(method = "<init>(SSSS)V", at = @At("TAIL"))
 	private void bhc_onChunkSectionInit(short yOffset, short nonEmptyBlockCount, short randomTickableBlockCount, short nonEmptyFluidCount, CallbackInfo info) {
 		bhc_sectionData = new CustomSectionData[SectionDataHandler.getCount()];
 		for (int i = 0; i < bhc_sectionData.length; i++) {
@@ -42,11 +37,41 @@ public class ChunkSectionMixin implements CoreChunkSection {
 			String key = SectionDataHandler.getKey(index);
 			bhc_sectionData[index].loadFromBNT(key, sectionTag);
 		}
-	}
+	}*/
 	
 	@Unique
 	@Override
 	public CustomSectionData bhc_getData(int index) {
-		return bhc_sectionData[index];
+		bhc_initData();
+		CustomSectionData data = bhc_sectionData[index];
+		if (data == null) {
+			data = SectionDataHandler.getConstructor(index).get();
+			bhc_sectionData[index] = data;
+		}
+		return data;
+	}
+	
+	@Unique
+	@Override
+	public void bhc_saveData(CompoundTag tag) {
+		if (bhc_sectionData == null) return;
+		for (int index = 0; index < bhc_sectionData.length; index++) {
+			String key = SectionDataHandler.getKey(index);
+			bhc_sectionData[index].saveToBNT(key, tag);
+		}
+	}
+	
+	@Override
+	public void bhc_loadData(CompoundTag tag) {
+		bhc_initData();
+		for (int index = 0; index < bhc_sectionData.length; index++) {
+			String key = SectionDataHandler.getKey(index);
+			bhc_sectionData[index].loadFromBNT(key, tag);
+		}
+	}
+	
+	@Unique
+	private void bhc_initData() {
+		if (bhc_sectionData == null) bhc_sectionData = new CustomSectionData[SectionDataHandler.getCount()];
 	}
 }

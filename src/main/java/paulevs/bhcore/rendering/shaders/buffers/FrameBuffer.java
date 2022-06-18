@@ -2,7 +2,6 @@ package paulevs.bhcore.rendering.shaders.buffers;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.modificationstation.stationapi.api.client.blaze3d.systems.RenderSystem;
 import org.lwjgl.opengl.GL30;
 import paulevs.bhcore.interfaces.Disposable;
 import paulevs.bhcore.util.DisposeUtil;

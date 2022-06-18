@@ -5,6 +5,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"ChunkSectionMixin",
+		"LevelManagerMixin",
 		"NibbleArrayMixin",
 		"ItemBaseMixin",
 		"ChunkMixin",
