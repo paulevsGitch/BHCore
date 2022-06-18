@@ -1,7 +1,7 @@
 package paulevs.bhcore.mixin;
 
 import net.minecraft.item.ItemBase;
-import net.minecraft.item.ItemInstance;
+import net.minecraft.item.ItemStack;
 import net.modificationstation.stationapi.api.client.render.model.BakedModel;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ public class ItemBaseMixin implements ItemModelProvider {
 	@Unique
 	@Override
 	@Nullable
-	public BakedModel bhc_getModel(ItemInstance stack) {
+	public BakedModel bhc_getModel(ItemStack stack) {
 		return null;
 	}
 }

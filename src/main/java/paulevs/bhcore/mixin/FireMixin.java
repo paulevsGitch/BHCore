@@ -1,7 +1,7 @@
 package paulevs.bhcore.mixin;
 
-import net.minecraft.block.BlockBase;
-import net.minecraft.block.Fire;
+import net.minecraft.block.BaseBlock;
+import net.minecraft.block.FireBlock;
 import net.minecraft.level.BlockView;
 import net.minecraft.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ import paulevs.bhcore.util.BurnableUtil;
 
 import java.util.Random;
 
-@Mixin(Fire.class)
+@Mixin(FireBlock.class)
 public class FireMixin {
 	@Inject(method = "method_1824(Lnet/minecraft/level/BlockView;III)Z", at = @At("HEAD"), cancellable = true)
 	private void bhc_method_1824(BlockView world, int x, int y, int z, CallbackInfoReturnable<Boolean> info) {
@@ -39,13 +39,13 @@ public class FireMixin {
 					if (meta > 15) {
 						meta = 15;
 					}
-					level.placeBlockWithMetaData(x, y, z, BlockBase.FIRE.id, meta);
+					level.setBlock(x, y, z, BaseBlock.FIRE.id, meta);
 				}
 				else {
-					level.setTile(x, y, z, 0);
+					level.setBlock(x, y, z, 0);
 				}
-				if (level.getTileId(x, y, z) == BlockBase.TNT.id) {
-					BlockBase.TNT.activate(level, x, y, z, 1);
+				if (level.getBlockId(x, y, z) == BaseBlock.TNT.id) {
+					BaseBlock.TNT.activate(level, x, y, z, 1);
 				}
 			}
 		}

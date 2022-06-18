@@ -1,6 +1,6 @@
 package paulevs.bhcore.util;
 
-import net.minecraft.block.BlockBase;
+import net.minecraft.block.BaseBlock;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.block.BlockStateHolder;
 
@@ -22,11 +22,11 @@ public class BurnableUtil {
 	
 	/**
 	 * Register block that can be burned by fire. Will be applied to all block states.
-	 * @param block {@link BlockBase} that can burn.
+	 * @param block {@link BaseBlock} that can burn.
 	 * @param burnSpeed burn speed. Wood have 5, leaves have 30
 	 * @param spreadDelay spread delay (chance of fire to be created). Wood have 20, leaves have 60
 	 */
-	public static void registerBurnable(BlockBase block, int burnSpeed, int spreadDelay) {
+	public static void registerBurnable(BaseBlock block, int burnSpeed, int spreadDelay) {
 		BlockStateHolder holder = (BlockStateHolder) block;
 		holder.getStateManager().getStates().forEach(state -> registerBurnable(state, burnSpeed, spreadDelay));
 	}
@@ -42,9 +42,9 @@ public class BurnableUtil {
 	/**
 	 * Register block that can be burned by fire. Will be applied to all block states.
 	 * All values are identical to wood.
-	 * @param block {@link BlockBase} that can burn.
+	 * @param block {@link BaseBlock} that can burn.
 	 */
-	public static void registerBurnable(BlockBase block) {
+	public static void registerBurnable(BaseBlock block) {
 		BlockStateHolder holder = (BlockStateHolder) block;
 		holder.getStateManager().getStates().forEach(state -> registerBurnable(state));
 	}

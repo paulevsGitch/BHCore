@@ -2,7 +2,7 @@ package paulevs.bhcore.util;
 
 import net.minecraft.level.BlockView;
 import net.minecraft.level.Level;
-import net.minecraft.level.WorldPopulationRegion;
+import net.minecraft.level.LevelPopulationRegion;
 import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.level.BlockStateView;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -11,7 +11,7 @@ import paulevs.bhcore.storage.vector.Vec3I;
 public class BlocksUtil {
 	/**
 	 * Set block state in world.
-	 * @param level {@link BlockView}, {@link Level} or {@link WorldPopulationRegion}
+	 * @param level {@link BlockView}, {@link Level} or {@link LevelPopulationRegion}
 	 * @param pos {@link Vec3I} block coordinate
 	 * @param state {@link BlockState} to place
 	 */
@@ -21,7 +21,7 @@ public class BlocksUtil {
 	
 	/**
 	 * Set block state in world.
-	 * @param level {@link BlockView}, {@link Level} or {@link WorldPopulationRegion}
+	 * @param level {@link BlockView}, {@link Level} or {@link LevelPopulationRegion}
 	 * @param x X block coordinate
 	 * @param y Y block coordinate
 	 * @param z Z block coordinate
@@ -33,7 +33,7 @@ public class BlocksUtil {
 	
 	/**
 	 * Get block state from world.
-	 * @param level {@link BlockView}, {@link Level} or {@link WorldPopulationRegion}
+	 * @param level {@link BlockView}, {@link Level} or {@link LevelPopulationRegion}
 	 * @param pos {@link Vec3I} block coordinate
 	 * @return {@link BlockState} at this position
 	 */
@@ -43,7 +43,7 @@ public class BlocksUtil {
 	
 	/**
 	 * Get block state from world.
-	 * @param level {@link BlockView}, {@link Level} or {@link WorldPopulationRegion}
+	 * @param level {@link BlockView}, {@link Level} or {@link LevelPopulationRegion}
 	 * @param x X block coordinate
 	 * @param y Y block coordinate
 	 * @param z Z block coordinate

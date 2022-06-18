@@ -27,16 +27,16 @@ public class LevelManagerMixin {
 	@Unique private static final String BHC_HEIGHT_KEY = "y";
 	
 	@Inject(
-		method = "method_1479(Lnet/minecraft/level/Level;Lnet/minecraft/util/io/CompoundTag;)Lnet/minecraft/level/chunk/Chunk;",
+		method = "loadData(Lnet/minecraft/level/Level;Lnet/minecraft/util/io/CompoundTag;)Lnet/minecraft/level/chunk/Chunk;",
 		at = @At(
 			value = "FIELD",
-			target = "Lnet/minecraft/level/chunk/Chunk;tiles:[B",
+			target = "Lnet/minecraft/level/chunk/Chunk;blocks:[B",
 			opcode = Opcodes.PUTFIELD,
 			shift = At.Shift.AFTER
 		),
 		locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private static void bhc_loadStationData(Level level, CompoundTag chunkTag, CallbackInfoReturnable<Chunk> info, int var2, int var3, Chunk chunk) {
+	private static void bhc_loadBHData(Level level, CompoundTag chunkTag, CallbackInfoReturnable<Chunk> info, int var2, int var3, Chunk chunk) {
 		ChunkSection[] sections = ((ChunkSectionsAccessor) chunk).getSections();
 		if (chunkTag.containsKey(BHC_SECTIONS_TAG)) {
 			ListTag listTag = chunkTag.getListTag(BHC_SECTIONS_TAG);
@@ -50,7 +50,7 @@ public class LevelManagerMixin {
 	}
 	
 	@Inject(
-		method = "method_1480(Lnet/minecraft/level/chunk/Chunk;Lnet/minecraft/level/Level;Lnet/minecraft/util/io/CompoundTag;)V",
+		method = "saveData(Lnet/minecraft/level/chunk/Chunk;Lnet/minecraft/level/Level;Lnet/minecraft/util/io/CompoundTag;)V",
 		at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/util/io/CompoundTag;put(Ljava/lang/String;[B)V",
@@ -58,7 +58,7 @@ public class LevelManagerMixin {
 			shift = At.Shift.AFTER
 		)
 	)
-	private static void bhc_saveStationData(Chunk chunk, Level level, CompoundTag tag, CallbackInfo ci) {
+	private static void bhc_saveBHData(Chunk chunk, Level level, CompoundTag tag, CallbackInfo ci) {
 		ChunkSection[] sections = ((ChunkSectionsAccessor) chunk).getSections();
 		ListTag listTag = tag.getListTag(BHC_SECTIONS_TAG);
 		for (int i = 0; i < listTag.size(); i++) {

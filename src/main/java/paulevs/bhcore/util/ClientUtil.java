@@ -48,7 +48,7 @@ public class ClientUtil {
 	 * @param z2 end Z coordinate.
 	 */
 	public static void updateArea(Level level, int x1, int y1, int z1, int x2, int y2, int z2) {
-		level.method_202(x1, y1, z1, x2, y2, z2);
+		level.callAreaEvents(x1, y1, z1, x2, y2, z2);
 	}
 	
 	/**
