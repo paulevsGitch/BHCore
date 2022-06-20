@@ -218,7 +218,6 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			String string;
 			
 			MaterialInfo activeMaterial = materials.values().stream().findAny().get();
-			LogUtil.log("mat", activeMaterial);
 			while ((string = bufferedReader.readLine()) != null) {
 				if (string.startsWith("usemtl")) {
 					String materialName = string.substring(7);
