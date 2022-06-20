@@ -25,7 +25,7 @@ import static net.modificationstation.stationapi.api.StationAPI.MODID;
 public class ModelLoaderMixin {
 	@Shadow @Final private TexturePack resourceManager;
 	
-	@Inject(method = "loadModelFromResource", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "loadModelFromResource", at = @At("HEAD"), cancellable = true, remap = false)
 	private void loadModelFromResource(Identifier id, CallbackInfoReturnable<UnbakedModel> info) throws IOException {
 		if (id.id.startsWith("builtin")) return;
 		Identifier id2 = ModelUtil.getReplacement(id);
