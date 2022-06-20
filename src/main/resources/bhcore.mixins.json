@@ -12,6 +12,7 @@
 		"FireMixin"
 	],
 	"client": [
+		"ModelLoaderMixin",
 		"MinecraftMixin"
 	],
 	"injectors": {

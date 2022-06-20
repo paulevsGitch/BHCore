@@ -180,4 +180,20 @@ public class MathUtil {
 		shuffle(DIRECTIONS_RANDOM, random);
 		return DIRECTIONS_RANDOM;
 	}
+	
+	public static float max(float a, float b) {
+		return a > b ? a : b;
+	}
+	
+	public static float max(float a, float b, float c) {
+		return max(a, max(b, c));
+	}
+	
+	public static float min(float a, float b) {
+		return a < b ? a : b;
+	}
+	
+	public static float min(float a, float b, float c) {
+		return min(a, min(b, c));
+	}
 }

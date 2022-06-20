@@ -4,6 +4,7 @@ import net.minecraft.util.maths.MathHelper;
 import paulevs.bhcore.util.MathUtil;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class Vec3F {
 	public float x;
@@ -97,11 +98,6 @@ public class Vec3F {
 		return l > 0 ? this.divide(MathHelper.sqrt(l)) : this;
 	}
 
-	@Override
-	public String toString() {
-		return String.format(Locale.ROOT, "[%f, %f, %f]", x, y, z);
-	}
-
 	public Vec3F multiply(float value) {
 		return multiply(value, value, value);
 	}
@@ -144,10 +140,33 @@ public class Vec3F {
 		return this;
 	}
 	
-	public Vec3F lerp(Vec3F a, Vec3F b, float delta) {
-		this.x = MathUtil.lerp(a.x, b.x, delta);
-		this.y = MathUtil.lerp(a.y, b.y, delta);
-		this.z = MathUtil.lerp(a.z, b.z, delta);
+	public Vec3F lerp(Vec3F b, float delta) {
+		this.x = MathUtil.lerp(this.x, b.x, delta);
+		this.y = MathUtil.lerp(this.y, b.y, delta);
+		this.z = MathUtil.lerp(this.z, b.z, delta);
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format(Locale.ROOT, "[%f, %f, %f]", x, y, z);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || !(obj instanceof Vec3F)) return false;
+		Vec3F vec = (Vec3F) obj;
+		return x == vec.x && y == vec.y && z == vec.z;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y, z);
+	}
+	
+	@Override
+	public Vec3F clone() {
+		return new Vec3F(x, y, z);
 	}
 }
