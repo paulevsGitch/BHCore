@@ -165,7 +165,7 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			JsonObject entry = preMaterials.get(name).getAsJsonObject();
 			String texture = entry.get("texture").getAsString();
 			boolean shade = entry.has("shade") ? entry.get("shade").getAsBoolean() : false;
-			int tintIndex = entry.has("tintIndex") ? entry.get("tintIndex").getAsInt() : 0;
+			int tintIndex = entry.has("tintIndex") ? entry.get("tintIndex").getAsInt() : -1;
 			
 			JsonObject preCull = entry.has("culling") ? entry.get("culling").getAsJsonObject() : new JsonObject();
 			Map<Direction, Boolean> cullingMap = new HashMap<>();
