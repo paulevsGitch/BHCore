@@ -33,10 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,17 +46,20 @@ import static net.modificationstation.stationapi.api.StationAPI.MODID;
 
 @Environment(EnvType.CLIENT)
 public class OBJBlockModel implements UnbakedModel, BakedModel {
+	private final Map<Direction, ImmutableList<QuadInfo>> infoQuads;
 	private final ImmutableList<SpriteIdentifier> textures;
+	private final ImmutableList<QuadInfo> noCullInfoQuads;
 	private final ModelTransformation transformation;
-	private final ImmutableList<QuadInfo> infoQuads;
-	private final Identifier particles;
+	private final SpriteIdentifier particles;
 	private final boolean useAO;
 	
-	private ImmutableList<BakedQuad> bakedQuads;
+	private Map<Direction, ImmutableList<BakedQuad>> bakedQuads = new HashMap<>();
+	private ImmutableList<BakedQuad> noCullBakedQuads;
 	private Sprite particleSprite;
 	
-	private OBJBlockModel(ImmutableList<QuadInfo> infoQuads, ModelTransformation transformation, ImmutableList<SpriteIdentifier> textures, Identifier particle, boolean useAO) {
+	private OBJBlockModel(Map<Direction, ImmutableList<QuadInfo>> infoQuads, ImmutableList<QuadInfo> noCullInfoQuads, ModelTransformation transformation, ImmutableList<SpriteIdentifier> textures, SpriteIdentifier particle, boolean useAO) {
 		this.transformation = transformation;
+		this.noCullInfoQuads = noCullInfoQuads;
 		this.infoQuads = infoQuads;
 		this.particles = particle;
 		this.textures = textures;
@@ -76,16 +80,25 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 	
 	@Override
 	public BakedModel bake(ModelLoader loader, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-		particleSprite = textureGetter.apply(SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, this.particles));
-		bakedQuads = infoQuads.stream().map(quad -> quad.bake(textureGetter)).collect(ImmutableList.toImmutableList());
+		particleSprite = textureGetter.apply(this.particles);
+		infoQuads.forEach((direction, values) -> bakedQuads.put(direction, bake(values, textureGetter)));
+		noCullBakedQuads = bake(noCullInfoQuads, textureGetter);
+		for (Direction dir: MathUtil.DIRECTIONS) bakedQuads.computeIfAbsent(dir, key -> ImmutableList.of());
 		return this;
+	}
+	
+	private ImmutableList<BakedQuad> bake(List<QuadInfo> list, Function<SpriteIdentifier, Sprite> textureGetter) {
+		return list
+			.stream()
+			.map(quad -> quad.bake(textureGetter))
+			.collect(ImmutableList.toImmutableList());
 	}
 	
 	// Baked Model
 	
 	@Override
 	public ImmutableList<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
-		return bakedQuads;
+		return face == null ? noCullBakedQuads : bakedQuads.get(face);
 	}
 	
 	@Override
@@ -130,28 +143,6 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 	
 	public static OBJBlockModel load(TexturePack resourceManager, JsonObject obj) throws IOException {
 		String objName = obj.get("linkedOBJ").getAsString();
-		boolean useAO = obj.has("useAO") ? obj.get("useAO").getAsBoolean() : false;
-		Vec3F offset = obj.has("offset") ? JsonUtil.vectorFromArray(obj.getAsJsonArray("offset")) : new Vec3F();
-		
-		Identifier particles;
-		SpriteIdentifier[] textures;
-		JsonObject packedTextures = obj.has("textures") ? obj.getAsJsonObject("textures") : null;
-		
-		if (packedTextures != null) {
-			textures = new SpriteIdentifier[packedTextures.size() - 1];
-			particles = Identifier.of(packedTextures.get("particle").getAsString());
-			packedTextures.keySet().stream().filter(name -> name.startsWith("material")).forEach(name -> {
-				int index = Integer.parseInt(name.substring(9));
-				Identifier id = Identifier.of(packedTextures.get(name).getAsString());
-				textures[index] = SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, id);
-			});
-		}
-		else {
-			particles = Identifier.of("block/stone");
-			textures = new SpriteIdentifier[] { SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, particles) };
-		}
-		
-		LogUtil.log("Textures:", Arrays.toString(textures));
 		
 		Resource resource = Resource.of(resourceManager.getResourceAsStream(ResourceManager.ASSETS.toPath(
 			Identifier.of(objName),
@@ -159,16 +150,60 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			"obj"
 		)));
 		
-		List<QuadInfo> quads = new ArrayList<>();
+		if (resource == null) {
+			LogUtil.warn("Specified OBJ model \"" + obj + "\" is missing!");
+			return null;
+		}
+		
+		boolean useAO = obj.has("useAO") ? obj.get("useAO").getAsBoolean() : false;
+		Vec3F offset = obj.has("offset") ? JsonUtil.vectorFromArray(obj.getAsJsonArray("offset")) : new Vec3F();
+		
+		List<SpriteIdentifier> sprites = new ArrayList<>();
+		JsonObject preMaterials = obj.getAsJsonObject("materials");
+		Map<String, MaterialInfo> materials = new HashMap<>();
+		preMaterials.keySet().forEach(name -> {
+			JsonObject entry = preMaterials.get(name).getAsJsonObject();
+			String texture = entry.get("texture").getAsString();
+			boolean shade = entry.has("shade") ? entry.get("shade").getAsBoolean() : false;
+			int tintIndex = entry.has("tintIndex") ? entry.get("tintIndex").getAsInt() : 0;
+			
+			JsonObject preCull = entry.has("culling") ? entry.get("culling").getAsJsonObject() : new JsonObject();
+			Map<Direction, Boolean> cullingMap = new HashMap<>();
+			for (Direction direction: MathUtil.DIRECTIONS) {
+				String dirName = direction.toString();
+				cullingMap.put(direction, preCull.has(dirName) ? preCull.get(dirName).getAsBoolean() : false);
+			}
+			
+			SpriteIdentifier sprite = SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, Identifier.of(texture));
+			materials.put(name, new MaterialInfo(sprite, cullingMap, shade, tintIndex));
+			sprites.add(sprite);
+		});
+		
+		Map<Direction, List<QuadInfo>> quads = new HashMap<>();
+		List<QuadInfo> noCullQuads = new ArrayList<>();
 		if (resource != null) {
-			loadOBJ(resource.getInputStream(), quads, textures, offset);
+			loadOBJ(resource.getInputStream(), quads, noCullQuads, materials, offset);
 			resource.close();
 		}
 		
-		return new OBJBlockModel(ImmutableList.copyOf(quads), ModelTransformation.NONE, ImmutableList.copyOf(textures), particles, useAO);
+		Map<Direction, ImmutableList<QuadInfo>> finalQuads = new HashMap<>();
+		quads.forEach((dir, group) -> finalQuads.put(dir, ImmutableList.copyOf(group)));
+		for (Direction direction: MathUtil.DIRECTIONS) finalQuads.computeIfAbsent(direction, key -> ImmutableList.of());
+		
+		MaterialInfo preParticle = materials.get("particle");
+		SpriteIdentifier particle = preParticle == null ? SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, Identifier.of("missingno")) : preParticle.texture;
+		
+		return new OBJBlockModel(
+			finalQuads,
+			ImmutableList.copyOf(noCullQuads),
+			ModelTransformation.NONE,
+			ImmutableList.copyOf(sprites),
+			particle,
+			useAO
+		);
 	}
 	
-	private static void loadOBJ(InputStream stream, List<QuadInfo> quads, SpriteIdentifier[] textures, Vec3F offset) {
+	private static void loadOBJ(InputStream stream, Map<Direction, List<QuadInfo>> quads, List<QuadInfo> noCullQuads, Map<String, MaterialInfo> materials, Vec3F offset) {
 		List<Float> vertexData = new ArrayList<>(12);
 		List<Float> uvData = new ArrayList<>(8);
 		
@@ -177,17 +212,17 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 		
 		Vec2F emptyUV = new Vec2F();
 		
-		byte maxTextures = (byte) (textures.length - 1);
-		byte texIndex = -1;
-		
 		try {
 			InputStreamReader streamReader = new InputStreamReader(stream);
 			BufferedReader bufferedReader = new BufferedReader(streamReader);
 			String string;
 			
+			MaterialInfo activeMaterial = materials.values().stream().findAny().get();
+			LogUtil.log("mat", activeMaterial);
 			while ((string = bufferedReader.readLine()) != null) {
 				if (string.startsWith("usemtl")) {
-					texIndex++;
+					String materialName = string.substring(7);
+					activeMaterial = materials.get(materialName);
 				}
 				else if (string.startsWith("vt")) {
 					String[] uv = string.split(" ");
@@ -213,17 +248,18 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 						
 						if (member.contains("/")) {
 							String[] sub = member.split("/");
-							vertexIndex.add(Integer.parseInt(sub[0]) - 1); // Vertex
-							uvIndex.add(Integer.parseInt(sub[1]) - 1);     // UV
+							vertexIndex.add(Integer.parseInt(sub[0]) - 1);
+							uvIndex.add(Integer.parseInt(sub[1]) - 1);
 						}
 						else {
-							vertexIndex.add(Integer.parseInt(member) - 1); // Vertex
+							vertexIndex.add(Integer.parseInt(member) - 1);
 						}
 					}
 					
 					QuadInfo quad = new QuadInfo();
-					quad.setTexture(textures[MathUtil.clamp(texIndex, 0, maxTextures)]);
-					quads.add(quad);
+					quad.setTexture(activeMaterial.texture);
+					quad.setShade(activeMaterial.shade);
+					quad.setTintIndex(activeMaterial.tintIndex);
 					
 					boolean hasUV = !uvIndex.isEmpty();
 					for (byte i = 0; i < 4; i++) {
@@ -244,6 +280,14 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 							quad.setUV(i, emptyUV);
 						}
 					}
+					
+					Direction dir = quad.getCullingGroup();
+					if (dir != null && activeMaterial.culling.get(dir)) {
+						quads.computeIfAbsent(dir, key -> new ArrayList<>()).add(quad);
+					}
+					else {
+						noCullQuads.add(quad);
+					}
 				}
 			}
 			
@@ -254,4 +298,6 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			e.printStackTrace();
 		}
 	}
+	
+	private record MaterialInfo(SpriteIdentifier texture, Map<Direction, Boolean> culling, boolean shade, int tintIndex) {}
 }

@@ -22,7 +22,7 @@ public final class QuadInfo {
 	private SpriteIdentifier texture;
 	private int rotation;
 	private boolean shade;
-	private int color;
+	private int tintIndex;
 	private Vec2F uv1;
 	private Vec2F uv2;
 	
@@ -46,8 +46,8 @@ public final class QuadInfo {
 		return this;
 	}
 	
-	public QuadInfo setColor(int color) {
-		this.color = color;
+	public QuadInfo setTintIndex(int tintIndex) {
+		this.tintIndex = tintIndex;
 		return this;
 	}
 	
@@ -63,7 +63,7 @@ public final class QuadInfo {
 			pack(data, i, sprite);
 		}
 		
-		return new BakedQuad(data, color, dir, sprite, shade);
+		return new BakedQuad(data, tintIndex, dir, sprite, shade);
 	}
 	
 	private void pack(int[] data, int index, Sprite sprite) {
@@ -76,6 +76,17 @@ public final class QuadInfo {
 		data[i | 3] = -1;
 		data[i | 4] = Float.floatToRawIntBits(sprite.getFrameU(uv.x));
 		data[i | 5] = Float.floatToRawIntBits(sprite.getFrameV(uv.y));
+	}
+	
+	public Direction getCullingGroup() {
+		Vec3F center = getCenter();
+		Direction dir = getCullDirection(vertex[0], center);
+		if (dir == null) return null;
+		for (byte i = 1; i < 4; i++) {
+			Direction dir2 = getCullDirection(vertex[i], center);
+			if (dir2 != dir) return null;
+		}
+		return dir;
 	}
 	
 	private Vec3F getNormal() {
@@ -107,17 +118,6 @@ public final class QuadInfo {
 		}
 		
 		return Direction.from(axis, direction);
-	}
-	
-	private Direction getCullingDirection() {
-		Vec3F center = getCenter();
-		Direction dir = getCullDirection(vertex[0], center);
-		if (dir == null) return null;
-		for (byte i = 1; i < 4; i++) {
-			Direction dir2 = getCullDirection(vertex[i], center);
-			if (dir2 != dir) return null;
-		}
-		return dir;
 	}
 	
 	private Vec3F getCenter() {
