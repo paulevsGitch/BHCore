@@ -53,7 +53,6 @@ public final class QuadInfo {
 	
 	public BakedQuad bake(Function<SpriteIdentifier, Sprite> textureGetter) {
 		Sprite sprite = textureGetter.apply(texture);
-		System.out.println("Texture " + sprite);
 		
 		int[] data = new int[32];
 		Vec3F normal = getNormal();

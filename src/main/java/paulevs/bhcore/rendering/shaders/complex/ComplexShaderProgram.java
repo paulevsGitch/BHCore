@@ -3,6 +3,7 @@ package paulevs.bhcore.rendering.shaders.complex;
 import paulevs.bhcore.rendering.shaders.Shader;
 import paulevs.bhcore.rendering.shaders.ShaderProgram;
 import paulevs.bhcore.rendering.shaders.ShaderType;
+import paulevs.bhcore.util.LogUtil;
 import paulevs.bhcore.util.ModUtil;
 import paulevs.bhcore.util.ResourceUtil;
 
@@ -26,7 +27,7 @@ public class ComplexShaderProgram extends ShaderProgram {
 	public static ComplexShaderProgram create(String name) {
 		List<String> resources = getResources(name, "global_uniforms.txt");
 		List<String> globalUniforms = getUniforms(resources);
-		System.out.println(makeVertexShader(globalUniforms));
+		LogUtil.log(makeVertexShader(globalUniforms));
 		return null;
 	}
 	
