@@ -35,6 +35,7 @@ public class ParticleManagerMixin {
 	@Inject(method = "addParticle", at = @At("HEAD"), cancellable = true)
 	private void bhc_addParticle(BaseParticle particle, CallbackInfo info) {
 		if (particle instanceof CustomParticle) {
+			if (bhc_customParticles.size() == 512) bhc_customParticles.remove(0);
 			bhc_customParticles.add(particle);
 			info.cancel();
 		}
