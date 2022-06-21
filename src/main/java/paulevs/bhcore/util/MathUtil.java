@@ -5,6 +5,7 @@ import net.modificationstation.stationapi.api.util.math.Direction;
 import java.util.Random;
 
 public class MathUtil {
+	public static final float PI = (float) Math.PI;
 	public static final Direction[] DIRECTIONS = Direction.values();
 	private static final Direction[] DIRECTIONS_RANDOM = Direction.values();
 	public static final Direction[] HORIZONTAL = {
