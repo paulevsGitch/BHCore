@@ -166,6 +166,7 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			String texture = entry.get("texture").getAsString();
 			boolean shade = entry.has("shade") ? entry.get("shade").getAsBoolean() : false;
 			int tintIndex = entry.has("tintIndex") ? entry.get("tintIndex").getAsInt() : -1;
+			Direction overrideDir = entry.has("direction") ? Direction.byName(entry.get("direction").getAsString()) : null;
 			
 			JsonObject preCull = entry.has("culling") ? entry.get("culling").getAsJsonObject() : new JsonObject();
 			Map<Direction, Boolean> cullingMap = new HashMap<>();
@@ -175,7 +176,7 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 			}
 			
 			SpriteIdentifier sprite = SpriteIdentifier.of(Atlases.GAME_ATLAS_TEXTURE, Identifier.of(texture));
-			materials.put(name, new MaterialInfo(sprite, cullingMap, shade, tintIndex));
+			materials.put(name, new MaterialInfo(sprite, cullingMap, shade, tintIndex, overrideDir));
 			sprites.add(sprite);
 		});
 		
@@ -298,5 +299,11 @@ public class OBJBlockModel implements UnbakedModel, BakedModel {
 		}
 	}
 	
-	private record MaterialInfo(SpriteIdentifier texture, Map<Direction, Boolean> culling, boolean shade, int tintIndex) {}
+	private record MaterialInfo(
+		SpriteIdentifier texture,
+		Map<Direction, Boolean> culling,
+		boolean shade,
+		int tintIndex,
+		Direction direction
+	) {}
 }

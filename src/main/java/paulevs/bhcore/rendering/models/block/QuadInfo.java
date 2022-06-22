@@ -25,6 +25,7 @@ public final class QuadInfo {
 	private int tintIndex;
 	private Vec2F uv1;
 	private Vec2F uv2;
+	private Direction direction;
 	
 	public QuadInfo setVertex(int index, Vec3F position) {
 		vertex[index] = position;
@@ -51,12 +52,20 @@ public final class QuadInfo {
 		return this;
 	}
 	
+	public QuadInfo setDirection(Direction direction) {
+		this.direction = direction;
+		return this;
+	}
+	
 	public BakedQuad bake(Function<SpriteIdentifier, Sprite> textureGetter) {
 		Sprite sprite = textureGetter.apply(texture);
 		
 		int[] data = new int[32];
-		Vec3F normal = getNormal();
-		Direction dir = getNormalDirection(normal);
+		Direction dir = direction;
+		if (dir == null) {
+			Vec3F normal = getNormal();
+			dir = getNormalDirection(normal);
+		}
 		
 		for (byte i = 0; i < 4; i++) {
 			pack(data, i, sprite);
