@@ -29,17 +29,12 @@ public class ModelLoaderMixin {
 	
 	@Inject(method = "loadModelFromResource", at = @At("HEAD"), cancellable = true, remap = false)
 	private void bhc_loadModelFromResource(Identifier id, CallbackInfoReturnable<UnbakedModel> info) throws IOException {
-		if (skipMixin) return;
 		if (id.id.startsWith("builtin")) return;
 		if (id.id.endsWith("#inventory")) return;
 		
 		Identifier id2 = ModelUtil.getReplacement(id);
 		if (id2 != null) {
-			skipMixin = true;
-			UnbakedModel model = loadModelFromResource(id2);
-			skipMixin = false;
-			info.setReturnValue(model);
-			return;
+			id = id2;
 		};
 		
 		Resource resource = Resource.of(resourceManager.getResourceAsStream(ResourceManager.ASSETS.toPath(
@@ -52,8 +47,15 @@ public class ModelLoaderMixin {
 			JsonObject obj = JsonUtil.read(resource);
 			resource.close();
 			
-			if (!obj.has("linkedOBJ")) return;
-			info.setReturnValue(OBJBlockModel.load(resourceManager, obj));
+			if (obj.has("linkedOBJ")) {
+				info.setReturnValue(OBJBlockModel.load(resourceManager, obj));
+				return;
+			}
+		};
+		
+		if (id2 != null) {
+			UnbakedModel model = loadModelFromResource(id2);
+			info.setReturnValue(model);
 		};
 	}
 	
