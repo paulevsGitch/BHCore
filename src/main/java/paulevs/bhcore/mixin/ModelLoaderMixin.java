@@ -10,6 +10,7 @@ import net.modificationstation.stationapi.api.resource.ResourceManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -24,12 +25,22 @@ import static net.modificationstation.stationapi.api.StationAPI.MODID;
 @Mixin(ModelLoader.class)
 public class ModelLoaderMixin {
 	@Shadow @Final private TexturePack resourceManager;
+	@Unique private boolean skipMixin;
 	
 	@Inject(method = "loadModelFromResource", at = @At("HEAD"), cancellable = true, remap = false)
-	private void loadModelFromResource(Identifier id, CallbackInfoReturnable<UnbakedModel> info) throws IOException {
+	private void bhc_loadModelFromResource(Identifier id, CallbackInfoReturnable<UnbakedModel> info) throws IOException {
+		if (skipMixin) return;
 		if (id.id.startsWith("builtin")) return;
+		if (id.id.endsWith("#inventory")) return;
+		
 		Identifier id2 = ModelUtil.getReplacement(id);
-		if (id2 != null) id = id2;
+		if (id2 != null) {
+			skipMixin = true;
+			UnbakedModel model = loadModelFromResource(id2);
+			skipMixin = false;
+			info.setReturnValue(model);
+			return;
+		};
 		
 		Resource resource = Resource.of(resourceManager.getResourceAsStream(ResourceManager.ASSETS.toPath(
 			id,
@@ -45,4 +56,7 @@ public class ModelLoaderMixin {
 			info.setReturnValue(OBJBlockModel.load(resourceManager, obj));
 		};
 	}
+	
+	@Shadow
+	private UnbakedModel loadModelFromResource(Identifier id) { return null; }
 }
