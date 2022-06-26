@@ -22,25 +22,9 @@ import java.io.IOException;
 
 import static net.modificationstation.stationapi.api.StationAPI.MODID;
 
-@Mixin(ModelLoader.class)
+@Mixin(value = ModelLoader.class, remap = false)
 public class ModelLoaderMixin {
-	
-	//private void injectModels()
-	
 	@Shadow @Final private TexturePack resourceManager;
-	/*@Unique private boolean skipMixin;
-	
-	@ModifyVariable(method = "loadModelFromResource", at = @At("HEAD"), ordinal = 0)
-	private Identifier bhc_changeModel1(Identifier id) {
-		Identifier id2 = ModelUtil.getReplacement(id);
-		return id2 == null ? id : id2;
-	}
-	
-	@ModifyVariable(method = "getOrLoadModel", at = @At("HEAD"), ordinal = 0)
-	private Identifier bhc_changeModel2(Identifier id) {
-		Identifier id2 = ModelUtil.getReplacement(id);
-		return id2 == null ? id : id2;
-	}*/
 	
 	@ModifyVariable(method = "loadModelFromResource", at = @At("HEAD"), ordinal = 0)
 	private Identifier bhc_changeModel1(Identifier id) {
