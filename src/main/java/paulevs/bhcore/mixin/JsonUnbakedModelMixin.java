@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static net.modificationstation.stationapi.impl.client.texture.StationRenderImpl.LOGGER;
 
-@Mixin(JsonUnbakedModel.class)
+@Mixin(value = JsonUnbakedModel.class, remap = false)
 public class JsonUnbakedModelMixin {
 	@Shadow private Identifier parentId;
 	@Shadow @Final private List<ModelOverride> overrides;
