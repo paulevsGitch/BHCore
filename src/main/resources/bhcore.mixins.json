@@ -12,6 +12,8 @@
 		"FireMixin"
 	],
 	"client": [
+		"JsonUnbakedModelAccessor",
+		"JsonUnbakedModelMixin",
 		"ParticleManagerMixin",
 		"ModelLoaderMixin",
 		"MinecraftMixin"
