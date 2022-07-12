@@ -30,7 +30,8 @@ public class ChunkSectionMixin implements CoreChunkSection {
 		if (bhc_sectionData == null) return;
 		for (int index = 0; index < bhc_sectionData.length; index++) {
 			String key = SectionDataHandler.getKey(index);
-			bhc_sectionData[index].saveToBNT(key, tag);
+			CustomSectionData data = bhc_sectionData[index];
+			if (data != null) data.saveToBNT(key, tag);
 		}
 	}
 	
@@ -39,7 +40,12 @@ public class ChunkSectionMixin implements CoreChunkSection {
 		bhc_initData();
 		for (int index = 0; index < bhc_sectionData.length; index++) {
 			String key = SectionDataHandler.getKey(index);
-			bhc_sectionData[index].loadFromBNT(key, tag);
+			CustomSectionData data = bhc_sectionData[index];
+			if (data == null) {
+				data = SectionDataHandler.getConstructor(index).get();
+				bhc_sectionData[index] = data;
+			}
+			data.loadFromBNT(key, tag);
 		}
 	}
 	
